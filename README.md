@@ -1,0 +1,35 @@
+# Easy Estate Android
+
+Starter Android app for Easy Estate written in Kotlin. The project is set up with Jetpack Compose and Material 3 so you can begin iterating right away.
+
+## Requirements
+
+- Android Studio Iguana (or newer)
+- Android SDK 34 installed via the SDK Manager
+- JDK 17 (bundled with recent Android Studio versions)
+
+## Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Lipkariuki/easy-estate-android.git
+   cd easy-estate-android
+   ```
+2. Open the project in Android Studio (`File` → `Open` → select the project folder).
+3. Let Gradle download dependencies and sync the project when prompted.
+4. Connect an Android device or start an emulator from the Device Manager.
+5. Run the app using the **Run** button in Android Studio or with:
+   ```bash
+   ./gradlew installDebug
+   ```
+
+The home screen shows a simple welcome message rendered with Jetpack Compose. Replace the `GreetingScreen` content in `app/src/main/java/com/easyestate/android/MainActivity.kt` with your actual UI as you progress.
+
+## Project Structure
+
+- `app` — main Android application module
+  - `src/main/java` — Kotlin source (including Compose UI)
+  - `src/main/res` — Android resources (strings, themes, etc.)
+  - `src/test` and `src/androidTest` — unit and instrumentation tests
+
+Feel free to add new modules (e.g., `core`, `feature-*`) as the app grows.
