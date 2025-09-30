@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -209,13 +210,15 @@ private fun SummaryCards() {
             title = "Income Due",
             value = "$12,500",
             subtitle = "Next 30 days",
-            accent = MaterialTheme.colorScheme.tertiary
+            accent = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.weight(1f)
         )
         MetricCard(
             title = "Active Leases",
             value = "28/30",
             subtitle = "Units Occupied",
-            accent = Color(0xFF8BC34A)
+            accent = Color(0xFF8BC34A),
+            modifier = Modifier.weight(1f)
         )
     }
     Spacer(modifier = Modifier.height(20.dp))
@@ -226,11 +229,11 @@ private fun MetricCard(
     title: String,
     value: String,
     subtitle: String,
-    accent: Color
+    accent: Color,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier
-            .weight(1f)
+        modifier = modifier
             .height(120.dp),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
