@@ -11,6 +11,12 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
 
+    private val adminAccount = AdminAccount(
+        name = "Easy Estate Admin",
+        email = "admin@easyestate.com",
+        password = "Admin123!"
+    )
+
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
@@ -20,8 +26,10 @@ class AuthViewModel : ViewModel() {
             delay(350)
             if (email.isBlank() || password.isBlank()) {
                 emitMessage("Enter both email and password")
+            } else if (email == adminAccount.email && password == adminAccount.password) {
+                emitNavigateHome(adminAccount)
             } else {
-                emitMessage("Signed in as $email")
+                emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
             }
         }
     }
@@ -35,7 +43,7 @@ class AuthViewModel : ViewModel() {
                 email.isBlank() -> emitMessage("Email is required")
                 password.length < 6 -> emitMessage("Password must be at least 6 characters")
                 else -> emitMessage(
-                    message = "Account created for $name",
+                    message = "Account created for $name. Use the admin credentials to log in for now.",
                     navigateBackToLogin = true
                 )
             }
@@ -58,13 +66,31 @@ class AuthViewModel : ViewModel() {
     private fun setLoading(isLoading: Boolean) {
         _uiState.update { it.copy(isLoading = isLoading) }
     }
+
+    private fun emitNavigateHome(account: AdminAccount) {
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                currentAdminName = account.name,
+                event = AuthUiEvent.NavigateHome(account.name)
+            )
+        }
+    }
 }
 
 data class AuthUiState(
     val isLoading: Boolean = false,
-    val event: AuthUiEvent? = null
+    val event: AuthUiEvent? = null,
+    val currentAdminName: String? = null
 )
 
 sealed interface AuthUiEvent {
     data class Message(val message: String, val navigateBackToLogin: Boolean = false) : AuthUiEvent
+    data class NavigateHome(val adminName: String) : AuthUiEvent
 }
+
+data class AdminAccount(
+    val name: String,
+    val email: String,
+    val password: String
+)

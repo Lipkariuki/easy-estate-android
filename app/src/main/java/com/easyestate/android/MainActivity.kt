@@ -13,16 +13,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
+import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LoginScreen
 import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +47,7 @@ fun EasyEstateApp(
     val uiState = authViewModel.uiState.collectAsStateWithLifecycle().value
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     uiState.event?.let { event ->
         LaunchedEffect(event) {
@@ -52,6 +57,14 @@ fun EasyEstateApp(
                     if (event.navigateBackToLogin && navController.previousBackStackEntry != null) {
                         navController.popBackStack()
                     }
+                }
+                is AuthUiEvent.NavigateHome -> {
+                    navController.navigate(AppDestination.Home.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                    snackbarHostState.showSnackbar("Hi ${event.adminName}! You're in as admin.")
                 }
             }
             authViewModel.consumeEvent()
@@ -64,17 +77,17 @@ fun EasyEstateApp(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = AuthDestination.Login.route,
+            startDestination = AppDestination.Login.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(AuthDestination.Login.route) {
+            composable(AppDestination.Login.route) {
                 LoginScreen(
                     onSignIn = { email, password -> authViewModel.signIn(email, password) },
-                    onSignUp = { navController.navigate(AuthDestination.SignUp.route) },
+                    onSignUp = { navController.navigate(AppDestination.SignUp.route) },
                     isLoading = uiState.isLoading
                 )
             }
-            composable(AuthDestination.SignUp.route) {
+            composable(AppDestination.SignUp.route) {
                 SignUpScreen(
                     onSignUp = { name, email, password ->
                         authViewModel.signUp(name, email, password)
@@ -83,13 +96,25 @@ fun EasyEstateApp(
                     isLoading = uiState.isLoading
                 )
             }
+            composable(AppDestination.Home.route) {
+                HomeScreen(
+                    adminName = uiState.currentAdminName ?: "Easy Estate Admin",
+                    onAddProperty = {
+                        coroutineScope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar("Add property coming soon")
+                        }
+                    }
+                )
+            }
         }
     }
 }
 
-private enum class AuthDestination(val route: String) {
+private enum class AppDestination(val route: String) {
     Login("login"),
-    SignUp("signup")
+    SignUp("signup"),
+    Home("home")
 }
 
 @Preview(showBackground = true)

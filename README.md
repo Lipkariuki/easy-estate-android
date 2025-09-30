@@ -25,6 +25,15 @@ Starter Android app for Easy Estate written in Kotlin. The project is set up wit
 
 The home screen shows a simple welcome message rendered with Jetpack Compose. Replace the `GreetingScreen` content in `app/src/main/java/com/easyestate/android/MainActivity.kt` with your actual UI as you progress.
 
+## Demo Account
+
+To explore the prototype screens quickly, use the seeded admin credentials:
+
+- Email: `admin@easyestate.com`
+- Password: `Admin123!`
+
+Successful sign-in takes you to a static home dashboard inspired by the shared mockups.
+
 ## Project Structure
 
 - `app` — main Android application module
