@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -37,7 +38,8 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 fun LoginScreen(
     onSignIn: (email: String, password: String) -> Unit,
     onSignUp: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -74,7 +76,8 @@ fun LoginScreen(
                     onValueChange = { email = it },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Email") }
+                    label = { Text("Email") },
+                    shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
@@ -83,7 +86,8 @@ fun LoginScreen(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = PasswordVisualTransformation(),
+                    shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
@@ -91,9 +95,18 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    enabled = !isLoading
                 ) {
-                    Text(text = "Sign In", style = MaterialTheme.typography.bodyLarge)
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+                        Text(text = "Sign In", style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 TextButton(onClick = onSignUp) {
@@ -156,5 +169,13 @@ private fun HeaderSection(modifier: Modifier = Modifier) {
 private fun LoginScreenPreview() {
     EasyEstateTheme {
         LoginScreen(onSignIn = { _, _ -> }, onSignUp = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginScreenLoadingPreview() {
+    EasyEstateTheme {
+        LoginScreen(onSignIn = { _, _ -> }, onSignUp = {}, isLoading = true)
     }
 }
