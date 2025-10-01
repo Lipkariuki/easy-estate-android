@@ -1,5 +1,7 @@
 package com.easyestate.android.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -19,12 +21,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.easyestate.android.R
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @Composable
@@ -34,127 +38,99 @@ fun LandingScreen(
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val gradientColors = listOf(
-        colorScheme.primary.copy(alpha = 0.95f),
-        colorScheme.primaryContainer.copy(alpha = 0.9f),
-        colorScheme.surface
-    )
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxSize()
+            .background(colorScheme.background)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Brush.verticalGradient(gradientColors))
+                .weight(1f)
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            colorScheme.primary,
+                            colorScheme.primary.copy(alpha = 0.85f),
+                            colorScheme.tertiary
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.landing_wave),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.FillWidth
+            )
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+            color = colorScheme.surface,
+            tonalElevation = 8.dp,
+            shadowElevation = 12.dp
         ) {
             Column(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                Surface(
-                    shape = RoundedCornerShape(24.dp),
-                    color = colorScheme.onPrimary.copy(alpha = 0.08f)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(96.dp)
-                            .clip(RoundedCornerShape(24.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "EA",
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                color = colorScheme.onPrimary,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 3.sp
-                            )
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "Easy Estate",
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        color = colorScheme.onPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
+                    text = "Easy Estates",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Property management streamlined for modern teams.",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = colorScheme.onPrimary.copy(alpha = 0.9f)
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    text = "Streamlining Your Property Management",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                tonalElevation = 6.dp,
-                shadowElevation = 12.dp,
-                color = colorScheme.surface
-            ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
-                        text = "Manage every property in one place",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            color = colorScheme.onSurface,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                    Text(
-                        text = "Sign in to view your dashboard or create a new admin account to get started.",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = colorScheme.onSurfaceVariant
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
                     Button(
                         onClick = onLoginClick,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
+                            .height(54.dp),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Text(
-                            text = "Log In",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "Login",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = colorScheme.onPrimary
                         )
                     }
                     OutlinedButton(
                         onClick = onSignUpClick,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(16.dp)
+                            .height(54.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = colorScheme.secondary.copy(alpha = 0.12f),
+                            contentColor = colorScheme.secondary
+                        ),
+                        border = BorderStroke(width = 0.dp, color = Color.Transparent)
                     ) {
                         Text(
-                            text = "Create Account",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "Sign Up",
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -164,14 +140,9 @@ fun LandingScreen(
 @Composable
 private fun LandingScreenPreview() {
     EasyEstateTheme {
-        LandingScreen(onLoginClick = {}, onSignUpClick = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LandingScreenDarkPreview() {
-    EasyEstateTheme(darkTheme = true) {
-        LandingScreen(onLoginClick = {}, onSignUpClick = {})
+        LandingScreen(
+            onLoginClick = {},
+            onSignUpClick = {}
+        )
     }
 }
