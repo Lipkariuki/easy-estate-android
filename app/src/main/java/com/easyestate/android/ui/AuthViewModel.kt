@@ -95,7 +95,7 @@ class AuthViewModel : ViewModel() {
 data class AuthUiState(
     val isLoading: Boolean = false,
     val event: AuthUiEvent? = null,
-    val currentAdminName: String? = null,
+    val currentAdminName: String? = "Easy Estate Admin",
     val lastCreatedAccount: AdminAccount? = null
 )
 

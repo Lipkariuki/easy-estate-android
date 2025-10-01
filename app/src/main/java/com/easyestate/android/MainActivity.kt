@@ -23,8 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
 import com.easyestate.android.ui.HomeScreen
-import com.easyestate.android.ui.LoginScreen
-import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
 import kotlinx.coroutines.launch
 
@@ -77,25 +75,9 @@ fun EasyEstateApp(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = AppDestination.Login.route,
+            startDestination = AppDestination.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(AppDestination.Login.route) {
-                LoginScreen(
-                    onSignIn = { email, password -> authViewModel.signIn(email, password) },
-                    onSignUp = { navController.navigate(AppDestination.SignUp.route) },
-                    isLoading = uiState.isLoading
-                )
-            }
-            composable(AppDestination.SignUp.route) {
-                SignUpScreen(
-                    onSignUp = { name, email, password ->
-                        authViewModel.signUp(name, email, password)
-                    },
-                    onBackToLogin = { navController.popBackStack() },
-                    isLoading = uiState.isLoading
-                )
-            }
             composable(AppDestination.Home.route) {
                 HomeScreen(
                     adminName = uiState.currentAdminName ?: "Easy Estate Admin",
@@ -112,8 +94,6 @@ fun EasyEstateApp(
 }
 
 private enum class AppDestination(val route: String) {
-    Login("login"),
-    SignUp("signup"),
     Home("home")
 }
 
