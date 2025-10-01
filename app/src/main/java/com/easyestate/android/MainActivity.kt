@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -22,9 +21,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
-import com.easyestate.android.ui.HomeScreen
+import com.easyestate.android.ui.LandingScreen
+import com.easyestate.android.ui.LoginScreen
+import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,6 @@ fun EasyEstateApp(
     val uiState = authViewModel.uiState.collectAsStateWithLifecycle().value
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
     uiState.event?.let { event ->
         LaunchedEffect(event) {
@@ -57,10 +56,11 @@ fun EasyEstateApp(
                     }
                 }
                 is AuthUiEvent.NavigateHome -> {
-                    navController.navigate(AppDestination.Home.route) {
+                    navController.navigate(AppDestination.Landing.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = true
+                            inclusive = false
                         }
+                        launchSingleTop = true
                     }
                     snackbarHostState.showSnackbar("Hi ${event.adminName}! You're in as admin.")
                 }
@@ -75,18 +75,47 @@ fun EasyEstateApp(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = AppDestination.Home.route,
+            startDestination = AppDestination.Landing.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(AppDestination.Home.route) {
-                HomeScreen(
-                    adminName = uiState.currentAdminName ?: "Easy Estate Admin",
-                    onAddProperty = {
-                        coroutineScope.launch {
-                            snackbarHostState.currentSnackbarData?.dismiss()
-                            snackbarHostState.showSnackbar("Add property coming soon")
+            composable(AppDestination.Landing.route) {
+                LandingScreen(
+                    onLoginClick = {
+                        navController.navigate(AppDestination.Login.route) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onSignUpClick = {
+                        navController.navigate(AppDestination.SignUp.route) {
+                            launchSingleTop = true
                         }
                     }
+                )
+            }
+            composable(AppDestination.Login.route) {
+                LoginScreen(
+                    onSignIn = { email, password -> authViewModel.signIn(email, password) },
+                    onSignUp = {
+                        navController.navigate(AppDestination.SignUp.route) {
+                            launchSingleTop = true
+                        }
+                    },
+                    isLoading = uiState.isLoading
+                )
+            }
+            composable(AppDestination.SignUp.route) {
+                SignUpScreen(
+                    onSignUp = { name, email, password ->
+                        authViewModel.signUp(name, email, password)
+                    },
+                    onBackToLogin = {
+                        if (!navController.popBackStack()) {
+                            navController.navigate(AppDestination.Login.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    isLoading = uiState.isLoading
                 )
             }
         }
@@ -94,7 +123,9 @@ fun EasyEstateApp(
 }
 
 private enum class AppDestination(val route: String) {
-    Home("home")
+    Landing("landing"),
+    Login("login"),
+    SignUp("sign_up")
 }
 
 @Preview(showBackground = true)
