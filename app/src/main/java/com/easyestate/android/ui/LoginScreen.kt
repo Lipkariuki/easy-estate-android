@@ -1,23 +1,32 @@
 package com.easyestate.android.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +40,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @Composable
@@ -39,57 +47,127 @@ fun LoginScreen(
     onSignIn: (email: String, password: String) -> Unit,
     onSignUp: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    onBack: () -> Unit = {}
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 24.dp)
         ) {
-            HeaderSection()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.Outlined.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Text(
+                    text = "Login",
+                    modifier = Modifier
+                        .weight(1f),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.size(48.dp))
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
+
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Welcome Back",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    text = "Welcome Back!",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "Sign in to manage your properties",
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "Log in to manage your estates.",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     modifier = Modifier.padding(top = 4.dp, bottom = 32.dp)
                 )
 
-                OutlinedTextField(
+                TextField(
                     value = email,
                     onValueChange = { email = it },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Email") },
-                    shape = RoundedCornerShape(12.dp)
+                    placeholder = { Text("Email") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Email,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    ),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
+
+                TextField(
                     value = password,
                     onValueChange = { password = it },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Password") },
+                    placeholder = { Text("Password") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
                     visualTransformation = PasswordVisualTransformation(),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        cursorColor = MaterialTheme.colorScheme.primary
+                    ),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                    TextButton(onClick = { }) {
+                        Text(
+                            text = "Forgot Password?",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Button(
                     onClick = { onSignIn(email, password) },
                     modifier = Modifier
@@ -105,61 +183,34 @@ fun LoginScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     } else {
-                        Text(text = "Sign In", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Login",
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "New to Easy Estate?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
                 TextButton(onClick = onSignUp) {
                     Text(
-                        text = "New to Easy Estate? Create an account",
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = "Sign up",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun HeaderSection(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Surface(
-                modifier = Modifier.size(64.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = Color.White.copy(alpha = 0.2f)
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "EA",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Easy Estate",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.5.sp)
-            )
-            Text(
-                text = "Streamline property management",
-                color = Color.White.copy(alpha = 0.85f),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
-            )
         }
     }
 }
