@@ -10,40 +10,57 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = TealPrimaryDark,
-    onPrimary = NeutralSurfaceDark,
-    secondary = TealSecondaryDark,
-    onSecondary = NeutralSurfaceDark,
-    tertiary = TealAccent,
-    background = NeutralSurfaceDark,
-    surface = NeutralSurfaceDark,
-    onSurface = TealSecondary,
-    onBackground = TealSecondary
+    primary = StitchPrimary,
+    onPrimary = StitchOnPrimary,
+    primaryContainer = StitchPrimaryContainer,
+    onPrimaryContainer = StitchOnPrimaryContainer,
+    secondary = StitchSecondary,
+    onSecondary = StitchOnSecondary,
+    secondaryContainer = StitchSecondaryContainer,
+    onSecondaryContainer = StitchOnSecondaryContainer,
+    tertiary = StitchTertiary,
+    onTertiary = StitchOnTertiary,
+    tertiaryContainer = StitchTertiaryContainer,
+    onTertiaryContainer = StitchOnTertiaryContainer,
+    background = StitchDarkBackground,
+    onBackground = StitchDarkOnBackground,
+    surface = StitchDarkSurface,
+    onSurface = StitchDarkOnSurface,
+    outline = StitchOutline,
+    outlineVariant = StitchOutlineVariant
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = TealPrimary,
-    onPrimary = Color.White,
-    secondary = TealSecondary,
-    onSecondary = Color.White,
-    tertiary = TealAccent,
-    background = NeutralBackground,
-    surface = Color.White,
-    onSurface = Color(0xFF1B2C2F),
-    onBackground = Color(0xFF1B2C2F)
+    primary = StitchPrimary,
+    onPrimary = StitchOnPrimary,
+    primaryContainer = StitchPrimaryContainer,
+    onPrimaryContainer = StitchOnPrimaryContainer,
+    secondary = StitchSecondary,
+    onSecondary = StitchOnSecondary,
+    secondaryContainer = StitchSecondaryContainer,
+    onSecondaryContainer = StitchOnSecondaryContainer,
+    tertiary = StitchTertiary,
+    onTertiary = StitchOnTertiary,
+    tertiaryContainer = StitchTertiaryContainer,
+    onTertiaryContainer = StitchOnTertiaryContainer,
+    background = StitchLightBackground,
+    onBackground = StitchLightOnBackground,
+    surface = StitchLightSurface,
+    onSurface = StitchLightOnSurface,
+    outline = StitchOutline,
+    outlineVariant = StitchOutlineVariant
 )
 
 @Composable
 fun EasyEstateTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
