@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -290,15 +291,30 @@ private fun PropertyCardView(property: PropertyCard) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Image(
-                    painter = painterResource(id = property.thumbnailRes),
-                    contentDescription = property.title,
-                    modifier = Modifier
-                        .height(72.dp)
-                        .width(96.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Crop
-                )
+                val imageModifier = Modifier
+                    .height(72.dp)
+                    .width(96.dp)
+                    .clip(RoundedCornerShape(16.dp))
+
+                if (property.thumbnailRes == R.drawable.placeholder_property) {
+                    Box(
+                        modifier = imageModifier.background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFFE0F7FA),
+                                    Color(0xFFB2EBF2)
+                                )
+                            )
+                        )
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = property.thumbnailRes),
+                        contentDescription = property.title,
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = property.title,
