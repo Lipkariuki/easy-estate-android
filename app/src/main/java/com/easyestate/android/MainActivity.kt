@@ -100,7 +100,14 @@ fun EasyEstateApp(
                             launchSingleTop = true
                         }
                     },
-                    isLoading = uiState.isLoading
+                    isLoading = uiState.isLoading,
+                    onBack = {
+                        if (!navController.popBackStack()) {
+                            navController.navigate(AppDestination.Landing.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 )
             }
             composable(AppDestination.SignUp.route) {
