@@ -3,7 +3,6 @@ package com.easyestate.android.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -121,8 +120,7 @@ fun LoginScreen(
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                         cursorColor = MaterialTheme.colorScheme.primary
-                    ),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -150,8 +148,7 @@ fun LoginScreen(
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                         cursorColor = MaterialTheme.colorScheme.primary
-                    ),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 18.dp)
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
