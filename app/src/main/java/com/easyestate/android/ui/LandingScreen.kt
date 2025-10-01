@@ -1,7 +1,7 @@
 package com.easyestate.android.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -48,15 +47,7 @@ fun LandingScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            colorScheme.primary,
-                            colorScheme.primary.copy(alpha = 0.85f),
-                            colorScheme.tertiary
-                        )
-                    )
-                ),
+                .background(colorScheme.background),
             contentAlignment = Alignment.BottomCenter
         ) {
             Image(

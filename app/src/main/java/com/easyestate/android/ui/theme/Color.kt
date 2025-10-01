@@ -4,28 +4,28 @@ import androidx.compose.ui.graphics.Color
 
 val StitchPrimary = Color(0xFF1AB741)
 val StitchOnPrimary = Color.White
-val StitchPrimaryContainer = Color(0xFFD1FFD9)
-val StitchOnPrimaryContainer = Color(0xFF00210B)
+val StitchPrimaryContainer = Color(0xFFD3F9DF)
+val StitchOnPrimaryContainer = Color(0xFF00210C)
 
-val StitchSecondary = Color(0xFF0F7A2B)
+val StitchSecondary = Color(0xFF118F33)
 val StitchOnSecondary = Color.White
-val StitchSecondaryContainer = Color(0xFFBCECC7)
-val StitchOnSecondaryContainer = Color(0xFF00210B)
+val StitchSecondaryContainer = Color(0xFFBFF0CB)
+val StitchOnSecondaryContainer = Color(0xFF00210C)
 
-val StitchTertiary = Color(0xFF3BA55D)
+val StitchTertiary = Color(0xFF45C36E)
 val StitchOnTertiary = Color.White
-val StitchTertiaryContainer = Color(0xFFC8F2D5)
-val StitchOnTertiaryContainer = Color(0xFF00210B)
+val StitchTertiaryContainer = Color(0xFFCFF7DA)
+val StitchOnTertiaryContainer = Color(0xFF00210C)
 
-val StitchLightBackground = Color(0xFFF6F8F6)
-val StitchLightOnBackground = Color(0xFF1E3323)
-val StitchLightSurface = Color(0xFFF6F8F6)
-val StitchLightOnSurface = Color(0xFF1E3323)
+val StitchLightBackground = Color(0xFFFFFFFF)
+val StitchLightOnBackground = Color(0xFF12341F)
+val StitchLightSurface = Color(0xFFFFFFFF)
+val StitchLightOnSurface = Color(0xFF12341F)
 
-val StitchDarkBackground = Color(0xFF112115)
-val StitchDarkOnBackground = Color(0xFFE0F1E3)
-val StitchDarkSurface = Color(0xFF1B3623)
-val StitchDarkOnSurface = Color(0xFFE0F1E3)
+val StitchDarkBackground = Color(0xFF102215)
+val StitchDarkOnBackground = Color(0xFFD7F0DF)
+val StitchDarkSurface = Color(0xFF18311F)
+val StitchDarkOnSurface = Color(0xFFD7F0DF)
 
-val StitchOutline = Color(0xFF6DA47C)
-val StitchOutlineVariant = Color(0xFFB2D4BD)
+val StitchOutline = Color(0xFF67C985)
+val StitchOutlineVariant = Color(0xFFB7E6C7)
