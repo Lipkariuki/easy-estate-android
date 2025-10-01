@@ -26,10 +26,20 @@ class AuthViewModel : ViewModel() {
             delay(350)
             if (email.isBlank() || password.isBlank()) {
                 emitMessage("Enter both email and password")
-            } else if (email == adminAccount.email && password == adminAccount.password) {
-                emitNavigateHome(adminAccount)
             } else {
-                emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
+                val matchedAccount = when {
+                    email == adminAccount.email && password == adminAccount.password -> adminAccount
+                    _uiState.value.lastCreatedAccount?.let {
+                        it.email == email && it.password == password
+                    } == true -> _uiState.value.lastCreatedAccount
+                    else -> null
+                }
+
+                if (matchedAccount != null) {
+                    emitNavigateHome(matchedAccount)
+                } else {
+                    emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
+                }
             }
         }
     }
@@ -42,10 +52,14 @@ class AuthViewModel : ViewModel() {
                 name.isBlank() -> emitMessage("Add your full name")
                 email.isBlank() -> emitMessage("Email is required")
                 password.length < 6 -> emitMessage("Password must be at least 6 characters")
-                else -> emitMessage(
-                    message = "Account created for $name. Use the admin credentials to log in for now.",
-                    navigateBackToLogin = true
-                )
+                else -> {
+                    val newAccount = AdminAccount(name, email, password)
+                    _uiState.update { it.copy(lastCreatedAccount = newAccount) }
+                    emitMessage(
+                        message = "Account created for $name. Use the admin credentials to log in for now.",
+                        navigateBackToLogin = true
+                    )
+                }
             }
         }
     }
@@ -81,7 +95,8 @@ class AuthViewModel : ViewModel() {
 data class AuthUiState(
     val isLoading: Boolean = false,
     val event: AuthUiEvent? = null,
-    val currentAdminName: String? = null
+    val currentAdminName: String? = null,
+    val lastCreatedAccount: AdminAccount? = null
 )
 
 sealed interface AuthUiEvent {
