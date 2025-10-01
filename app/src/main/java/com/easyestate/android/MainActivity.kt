@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
+import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
 import com.easyestate.android.ui.SignUpScreen
@@ -56,9 +57,9 @@ fun EasyEstateApp(
                     }
                 }
                 is AuthUiEvent.NavigateHome -> {
-                    navController.navigate(AppDestination.Landing.route) {
+                    navController.navigate(AppDestination.Home.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = false
+                            inclusive = true
                         }
                         launchSingleTop = true
                     }
@@ -125,6 +126,11 @@ fun EasyEstateApp(
                     isLoading = uiState.isLoading
                 )
             }
+            composable(AppDestination.Home.route) {
+                HomeScreen(
+                    adminName = uiState.currentAdminName.orEmpty()
+                )
+            }
         }
     }
 }
@@ -132,7 +138,8 @@ fun EasyEstateApp(
 private enum class AppDestination(val route: String) {
     Landing("landing"),
     Login("login"),
-    SignUp("sign_up")
+    SignUp("sign_up"),
+    Home("home")
 }
 
 @Preview(showBackground = true)
