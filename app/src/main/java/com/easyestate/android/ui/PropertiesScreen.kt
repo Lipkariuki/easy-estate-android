@@ -198,7 +198,7 @@ private fun PropertyActionTile(
     }
 }
 
-private data class QuickAction(
+data class QuickAction(
     val title: String,
     val icon: ImageVector
 )
