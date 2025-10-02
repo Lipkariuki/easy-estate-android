@@ -270,7 +270,7 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 4
+            maxItemsInEachRow = 3
         ) {
             DashboardQuickActions.forEach { action ->
                 QuickActionTile(
@@ -372,13 +372,13 @@ private val DashboardQuickActions = listOf(
     QuickAction("Payment", Icons.Outlined.Payments),
     QuickAction("Support", Icons.Outlined.SupportAgent),
     QuickAction("Properties", Icons.Outlined.Apartment),
-    QuickAction("Maintenance", Icons.Outlined.Construction)
+    QuickAction("Maintenance", Icons.Outlined.Construction),
+    QuickAction("Tenants", Icons.Outlined.Groups)
 )
 
 private val NavigationItems = listOf(
     NavigationItem("Home", Icons.Outlined.Home),
     NavigationItem("Properties", Icons.Outlined.Apartment),
-    NavigationItem("Tenants", Icons.Outlined.Groups),
     NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet),
     NavigationItem("Account", Icons.Outlined.AccountCircle)
 )
