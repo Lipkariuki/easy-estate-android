@@ -76,6 +76,7 @@ fun HomeScreen(
     adminName: String,
     hasUnreadNotifications: Boolean = false,
     onLogout: () -> Unit,
+    onAddTenantClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -102,7 +103,7 @@ fun HomeScreen(
                 OccupancyCard()
             }
             item {
-                QuickActionsGrid()
+                QuickActionsGrid(onAddTenantClick = onAddTenantClick)
             }
         }
     }
@@ -328,7 +329,11 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier) {
             DashboardQuickActions.forEach { action ->
                 QuickActionTile(
                     action = action,
-                    onClick = { /* TODO: Handle action click */ },
+                    onClick = {
+                        if (action.title == "Add Tenant") {
+                            onAddTenantClick()
+                        } else { /* TODO: Handle other action clicks */ }
+                    },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -420,7 +425,7 @@ private data class NavigationItem(
 private val DashboardQuickActions = listOf(
     QuickAction("Send Bills", Icons.Outlined.ReceiptLong),
     QuickAction("Broadcast", Icons.Outlined.Campaign),
-    QuickAction("Visitor Log", Icons.Outlined.BarChart), // Using BarChart as a substitute for badge
+    QuickAction("Visitor Log", Icons.Outlined.Badge), // Using Badge as a substitute for badge
     QuickAction("Notice", Icons.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
     QuickAction("Payment", Icons.Outlined.Payments),
     QuickAction("Support", Icons.Outlined.SupportAgent),
@@ -439,15 +444,15 @@ private val NavigationItems = listOf(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    EasyEstateTheme {
-        HomeScreen(adminName = "Easy Estate Admin", onLogout = {})
+    EasyEstateTheme { // Added onAddTenantClick to preview
+        HomeScreen(adminName = "Easy Estate Admin", onLogout = {}, onAddTenantClick = {})
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
-    EasyEstateTheme {
-        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {})
+    EasyEstateTheme { // Added onAddTenantClick to preview
+        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {}, onAddTenantClick = {})
     }
 }

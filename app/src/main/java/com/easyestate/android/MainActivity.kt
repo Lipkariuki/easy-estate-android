@@ -158,7 +158,8 @@ private enum class AppDestination(val route: String) {
     Login("login"),
     SignUp("sign_up"),
     ForgotPassword("forgot_password"),
-    Home("home")
+    Home("home"),
+    AddTenant("add_tenant")
 }
 
 @Preview(showBackground = true)
