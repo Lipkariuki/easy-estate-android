@@ -103,7 +103,7 @@ fun HomeScreen(
                 OccupancyCard()
             }
             item {
-                QuickActionsGrid(onAddTenantClick = onAddTenantClick)
+                QuickActionsGrid(modifier, onAddTenantClick = onAddTenantClick)
             }
         }
     }
@@ -313,7 +313,7 @@ private data class UnitOverview(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun QuickActionsGrid(modifier: Modifier = Modifier) {
+private fun QuickActionsGrid(modifier: Modifier = Modifier, onAddTenantClick: () -> Unit) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Quick Actions",
@@ -328,11 +328,12 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier) {
         ) {
             DashboardQuickActions.forEach { action ->
                 QuickActionTile(
-                    action = action,
-                    onClick = {
-                        if (action.title == "Add Tenant") {
-                            onAddTenantClick()
-                        } else { /* TODO: Handle other action clicks */ }
+                    action = action, onClick = {
+                        when (action.title) {
+                            "Add Tenant" -> onAddTenantClick()
+                            // TODO: Handle other actions
+                            else -> {}
+                        }
                     },
                     modifier = Modifier.weight(1f)
                 )
@@ -444,7 +445,7 @@ private val NavigationItems = listOf(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    EasyEstateTheme { // Added onAddTenantClick to preview
+    EasyEstateTheme {
         HomeScreen(adminName = "Easy Estate Admin", onLogout = {}, onAddTenantClick = {})
     }
 }
@@ -452,7 +453,7 @@ private fun HomeScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
-    EasyEstateTheme { // Added onAddTenantClick to preview
+    EasyEstateTheme {
         HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {}, onAddTenantClick = {})
     }
 }

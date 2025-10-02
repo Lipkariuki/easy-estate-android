@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
+import com.easyestate.android.ui.AddTenantScreen
 import com.easyestate.android.ui.AuthViewModel
 import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
@@ -146,7 +147,18 @@ fun EasyEstateApp(
             composable(AppDestination.Home.route) {
                 HomeScreen(
                     adminName = uiState.currentAdminName.orEmpty(),
-                    onLogout = { authViewModel.logout() }
+                    onLogout = { authViewModel.logout() },
+                    onAddTenantClick = { navController.navigate(AppDestination.AddTenant.route) }
+                )
+            }
+            composable(AppDestination.AddTenant.route) {
+                AddTenantScreen(
+                    onClose = { navController.popBackStack() },
+                    onSubmit = { _, _, _, _, _, _ ->
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Tenant submitted (stub)")
+                        }
+                    }
                 )
             }
         }
@@ -159,7 +171,7 @@ private enum class AppDestination(val route: String) {
     SignUp("sign_up"),
     ForgotPassword("forgot_password"),
     Home("home"),
-    AddTenant("add_tenant")
+    AddTenant("add_tenant"),
 }
 
 @Preview(showBackground = true)
