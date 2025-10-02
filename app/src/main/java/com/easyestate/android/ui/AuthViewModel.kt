@@ -23,23 +23,23 @@ class AuthViewModel : ViewModel() {
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             setLoading(true)
-            delay(350)
+            delay(500) // Simulate network latency
             if (email.isBlank() || password.isBlank()) {
                 emitMessage("Enter both email and password")
-            } else {
-                val matchedAccount = when {
-                    email == adminAccount.email && password == adminAccount.password -> adminAccount
-                    _uiState.value.lastCreatedAccount?.let {
-                        it.email == email && it.password == password
-                    } == true -> _uiState.value.lastCreatedAccount
-                    else -> null
-                }
+                return@launch
+            }
 
-                if (matchedAccount != null) {
-                    emitNavigateHome(matchedAccount)
-                } else {
-                    emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
-                }
+            val lastCreated = _uiState.value.lastCreatedAccount
+            val matchedAccount = when {
+                email == adminAccount.email && password == adminAccount.password -> adminAccount
+                lastCreated != null && email == lastCreated.email && password == lastCreated.password -> lastCreated
+                else -> null
+            }
+
+            if (matchedAccount != null) {
+                emitNavigateHome(matchedAccount)
+            } else {
+                emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
             }
         }
     }
@@ -47,18 +47,17 @@ class AuthViewModel : ViewModel() {
     fun signUp(name: String, email: String, password: String) {
         viewModelScope.launch {
             setLoading(true)
-            delay(350)
+            delay(500) // Simulate network latency
             when {
                 name.isBlank() -> emitMessage("Add your full name")
                 email.isBlank() -> emitMessage("Email is required")
                 password.length < 6 -> emitMessage("Password must be at least 6 characters")
                 else -> {
                     val newAccount = AdminAccount(name, email, password)
-                    _uiState.update { it.copy(lastCreatedAccount = newAccount) }
-                    emitMessage(
-                        message = "Account created for $name. Use the admin credentials to log in for now.",
-                        navigateBackToLogin = true
-                    )
+                    _uiState.update { it.copy(isLoading = false, lastCreatedAccount = newAccount) }
+                    // Use a separate event for navigation after sign-up
+                    val message = "Account created for $name. You can now log in."
+                    emitMessage(message, navigateBackToLogin = true)
                 }
             }
         }

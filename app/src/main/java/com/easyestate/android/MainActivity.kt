@@ -112,11 +112,7 @@ fun EasyEstateApp(
                     },
                     isLoading = uiState.isLoading,
                     onBack = {
-                        if (!navController.popBackStack()) {
-                            navController.navigate(AppDestination.Landing.route) {
-                                launchSingleTop = true
-                            }
-                        }
+                        navController.popBackStack()
                     }
                 )
             }
@@ -125,13 +121,7 @@ fun EasyEstateApp(
                     onSignUp = { name, email, password ->
                         authViewModel.signUp(name, email, password)
                     },
-                    onBackToLogin = {
-                        if (!navController.popBackStack()) {
-                            navController.navigate(AppDestination.Login.route) {
-                                launchSingleTop = true
-                            }
-                        }
-                    },
+                    onBack = { navController.popBackStack() },
                     isLoading = uiState.isLoading
                 )
             }

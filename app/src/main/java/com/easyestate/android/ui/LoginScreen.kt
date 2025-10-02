@@ -52,6 +52,16 @@ fun LoginScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
+    val textFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        cursorColor = MaterialTheme.colorScheme.primary
+    )
+
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier
@@ -112,15 +122,7 @@ fun LoginScreen(
                         )
                     },
                     shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        cursorColor = MaterialTheme.colorScheme.primary
-                    )
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -140,15 +142,7 @@ fun LoginScreen(
                     },
                     visualTransformation = PasswordVisualTransformation(),
                     shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        cursorColor = MaterialTheme.colorScheme.primary
-                    )
+                    colors = textFieldColors
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
