@@ -388,7 +388,10 @@ private fun QuickActionTile(
 
 
 @Composable
-private fun HomeNavigationBar(modifier: Modifier = Modifier) {
+private fun HomeNavigationBar(
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
+) {
     var selectedItem by remember { mutableIntStateOf(0) }
     val items = NavigationItems
 
@@ -401,7 +404,10 @@ private fun HomeNavigationBar(modifier: Modifier = Modifier) {
             val isSelected = selectedItem == index
             NavigationBarItem(
                 selected = isSelected,
-                onClick = { selectedItem = index },
+                onClick = {
+                    selectedItem = index
+                    onNavigate(item.route)
+                },
                 icon = { Icon(imageVector = item.icon, contentDescription = item.title, modifier = Modifier.size(30.dp)) },
                 label = { Text(item.title, style = MaterialTheme.typography.bodySmall) },
                 colors = NavigationBarItemDefaults.colors(
@@ -423,7 +429,8 @@ private data class QuickAction(
 
 private data class NavigationItem(
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val route: String
 )
 
 private val DashboardQuickActions = listOf(
@@ -439,10 +446,10 @@ private val DashboardQuickActions = listOf(
 )
 
 private val NavigationItems = listOf(
-    NavigationItem("Home", Icons.Outlined.Home),
-    NavigationItem("Properties", Icons.Outlined.Apartment),
-    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet),
-    NavigationItem("Account", Icons.Outlined.AccountCircle)
+    NavigationItem("Home", Icons.Outlined.Home, "home"),
+    NavigationItem("Properties", Icons.Outlined.Apartment, "properties"),
+    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, "finances"),
+    NavigationItem("Account", Icons.Outlined.AccountCircle, "account")
 )
 
 @Preview(showBackground = true)
