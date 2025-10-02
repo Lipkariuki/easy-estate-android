@@ -1,5 +1,6 @@
 package com.easyestate.android.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,6 +37,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,173 +54,142 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val quickActions = DashboardQuickActions
+    val gridColumns = 4
 
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(gridColumns),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 32.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 24.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "Welcome back",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                        )
-                        Text(
-                            text = adminName,
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = "Search",
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                        BadgedBox(
-                            badge = {
-                                if (hasUnreadNotifications) {
-                                    Badge()
-                                }
-                            }
-                        ) {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Notifications,
-                                    contentDescription = "Notifications",
-                                    tint = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-                        }
-                    }
+                item(span = { GridItemSpan(gridColumns) }) {
+                    HomeHeader(
+                        adminName = adminName,
+                        hasUnreadNotifications = hasUnreadNotifications,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                item(span = { GridItemSpan(gridColumns) }) {
+                    OccupancyCard(modifier = Modifier.padding(bottom = 16.dp))
+                }
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                item(span = { GridItemSpan(gridColumns) }) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Occupancy Overview",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                            text = "Quick Actions",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Bottom
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                         ) {
-                            OccupancyStat(label = "Occupied", value = "48")
-                            OccupancyStat(label = "Vacant", value = "12")
-                            OccupancyStat(label = "Upcoming", value = "5")
+                            Text("View All")
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                items(quickActions) { action ->
+                    QuickActionTile(action = action)
+                }
 
-                Text(
-                    text = "Quick Actions",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(quickActions) { action ->
-                        QuickActionTile(action = action)
-                    }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Spacer(modifier = Modifier.height(24.dp))
+            HomeNavigationBar()
+        }
+    }
+}
 
-                NavigationBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 0.dp
-                ) {
-                    NavigationBarItem(
-                        selected = true,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Home,
-                                contentDescription = "Home"
-                            )
-                        },
-                        label = { Text("Home") },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                        )
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Apartment,
-                                contentDescription = "Portfolio"
-                            )
-                        },
-                        label = { Text("Portfolio") }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.AccountCircle,
-                                contentDescription = "Tenants"
-                            )
-                        },
-                        label = { Text("Tenants") }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Settings,
-                                contentDescription = "Settings"
-                            )
-                        },
-                        label = { Text("Settings") }
+@Composable
+private fun HomeHeader(
+    adminName: String,
+    hasUnreadNotifications: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = "Welcome back",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
+            Text(
+                text = adminName,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            IconButton(onClick = { }) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            BadgedBox(
+                badge = { if (hasUnreadNotifications) Badge() }
+            ) {
+                IconButton(onClick = { }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notifications",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OccupancyCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Occupancy Overview",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                OccupancyStat(label = "Occupied", value = "48")
+                OccupancyStat(label = "Vacant", value = "12")
+                OccupancyStat(label = "Upcoming", value = "5")
             }
         }
     }
@@ -334,6 +307,49 @@ private fun QuickActionTile(
                     style = MaterialTheme.typography.labelMedium
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun HomeNavigationBar(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        NavigationBar(
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = 0.dp
+        ) {
+            NavigationBarItem(
+                selected = true,
+                onClick = { },
+                icon = { Icon(imageVector = Icons.Outlined.Home, contentDescription = "Home") },
+                label = { Text("Home") },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                )
+            )
+            NavigationBarItem(
+                selected = false,
+                onClick = { },
+                icon = { Icon(imageVector = Icons.Outlined.Apartment, contentDescription = "Portfolio") },
+                label = { Text("Portfolio") }
+            )
+            NavigationBarItem(
+                selected = false,
+                onClick = { },
+                icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = "Tenants") },
+                label = { Text("Tenants") }
+            )
+            NavigationBarItem(
+                selected = false,
+                onClick = { },
+                icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings") },
+                label = { Text("Settings") }
+            )
         }
     }
 }
