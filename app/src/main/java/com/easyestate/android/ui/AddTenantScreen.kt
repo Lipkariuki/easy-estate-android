@@ -46,14 +46,13 @@ fun AddTenantScreen(
     var occupation by rememberSaveable { mutableStateOf("") }
 
     val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedContainerColor = TenantSubtleLight,
-        unfocusedContainerColor = TenantSubtleLight,
+        containerColor = TenantSubtleLight,
         focusedBorderColor = Color.Transparent,
         unfocusedBorderColor = Color.Transparent,
         errorBorderColor = Color.Transparent,
         disabledBorderColor = Color.Transparent,
         unfocusedPlaceholderColor = TenantPlaceholderLight,
-        focusedTextColor = TenantContentLight,
+        textColor = TenantContentLight,
         cursorColor = TenantPrimary, // Use primary
     )
 
@@ -222,15 +221,14 @@ fun GenderDropdown(selectedGender: String, onGenderSelected: (String) -> Unit) {
                 .menuAnchor()
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedContainerColor = TenantSubtleLight,
-                unfocusedContainerColor = TenantSubtleLight,
+            colors = TextFieldDefaults.outlinedTextFieldColors( // Corrected here as well
+                containerColor = TenantSubtleLight,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 errorBorderColor = Color.Transparent,
                 disabledBorderColor = Color.Transparent,
                 unfocusedPlaceholderColor = TenantPlaceholderLight,
-                focusedTextColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight,
+                textColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight, // Use textColor
                 cursorColor = TenantPrimary,
             )
         )
