@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.easyestate.android.AppDestination
 import com.easyestate.android.R
 import com.easyestate.android.ui.components.HomeNavigationBar
 import com.easyestate.android.ui.theme.EasyEstateTheme
@@ -184,8 +185,12 @@ private fun QuickActionsSection() {
         ) {
             actions.forEach { action ->
                 PropertyActionTile(
-                    action = action,
-                    onClick = { /* TODO */ },
+                    action = action, onClick = {
+                        when (action.title) {
+                            "Add Property" -> onNavigate(AppDestination.AddProperty.route)
+                            else -> { /* TODO: Handle other actions */ }
+                        }
+                    },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -233,6 +238,6 @@ data class QuickAction(
 @Composable
 private fun PropertiesScreenPreview() {
     EasyEstateTheme {
-        PropertiesScreen(onBack = {}, onNavigate = {})
+        PropertiesScreen(onBack = {}, onNavigate = { })
     }
 }
