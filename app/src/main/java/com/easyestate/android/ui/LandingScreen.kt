@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -86,7 +87,7 @@ fun LandingScreen(
                     imageVector = Icons.Filled.Home,
                     contentDescription = "Easy Estates Logo",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.height(80.dp)
+                    modifier = Modifier.size(100.dp)
                 )
                 Text(
                     text = "Easy Estates",
