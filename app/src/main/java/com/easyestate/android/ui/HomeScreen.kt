@@ -426,7 +426,7 @@ private data class NavigationItem(
 private val DashboardQuickActions = listOf(
     QuickAction("Send Bills", Icons.Outlined.ReceiptLong),
     QuickAction("Broadcast", Icons.Outlined.Campaign),
-    QuickAction("Visitor Log", Icons.Outlined.Badge), // Using Badge as a substitute for badge
+    QuickAction("Visitor Log", Icons.Outlined.ReceiptLong), // Using ReceiptLong as a substitute for Badge
     QuickAction("Notice", Icons.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
     QuickAction("Payment", Icons.Outlined.Payments),
     QuickAction("Support", Icons.Outlined.SupportAgent),
