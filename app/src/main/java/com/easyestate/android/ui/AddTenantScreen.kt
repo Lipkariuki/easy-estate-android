@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -155,7 +156,7 @@ private fun AddTenantHeader(onClose: () -> Unit) {
             }
             Spacer(modifier = Modifier.size(48.dp)) // To balance the IconButton
         }
-        Divider()
+        HorizontalDivider()
         Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
             Text("New Tenant Details", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold))
             Text("Fill in the form to onboard a new tenant.", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -170,13 +171,13 @@ fun FormSection(
     isCard: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val modifier = if (isCard) {
+    val sectionModifier = if (isCard) {
         Modifier
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp))
             .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
             .padding(24.dp)
     } else {
-        Modifier.padding(horizontal = 4.dp)
+        Modifier
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -185,7 +186,7 @@ fun FormSection(
             Text(text = title, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(sectionModifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             content()
         }
     }
@@ -203,7 +204,7 @@ fun GenderDropdown(selectedGender: String, onGenderSelected: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
-            value = if (selectedGender.isEmpty()) "" else selectedGender,
+            value = selectedGender.ifEmpty { "" },
             onValueChange = {},
             readOnly = true,
             placeholder = { Text("Gender") },
@@ -248,21 +249,26 @@ fun DocumentUploadButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = Modifier
+    val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+    Column(
+        modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(24.dp),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-            )
+            .drawBehind {
+                drawRoundRect(
+                    color = color,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(
+                        width = 2.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                    ),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(24.dp.toPx())
+                )
+            }
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surface)
             .clickable(onClick = onClick)
             .padding(16.dp),
-        verticalAlignment = Alignment.Center,
+        verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
