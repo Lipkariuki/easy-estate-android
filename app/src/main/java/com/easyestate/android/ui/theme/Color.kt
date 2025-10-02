@@ -27,17 +27,6 @@ val StitchLightOnBackground = Color(0xFF102416)
 val StitchLightSurface = Color(0xFFFDFDFD)
 val StitchLightOnSurface = Color(0xFF102416)
 
-// Tenant Onboarding Screen specific colors
-val TenantPrimary = Color(0xFF05C7B4)
-val TenantBackgroundLight = Color(0xFFF5F8F8)
-val TenantBackgroundDark = Color(0xFF0F2321)
-val TenantContentLight = Color(0xFF0D1C1B)
-val TenantContentDark = Color(0xFFE0F2F1)
-val TenantSubtleLight = Color(0xFFE6F4F3)
-val TenantSubtleDark = Color(0xFF1A3A38)
-val TenantPlaceholderLight = Color(0xFF479E96)
-val TenantPlaceholderDark = Color(0xFF80CBC4)
-
 val StitchDarkBackground = Color(0xFF0F1E14)
 val StitchDarkOnBackground = Color(0xFFD9F0E1)
 val StitchDarkSurface = Color(0xFF15291B)
