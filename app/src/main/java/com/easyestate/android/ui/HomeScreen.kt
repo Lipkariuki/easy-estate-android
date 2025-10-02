@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -53,7 +52,10 @@ fun HomeScreen(
     val quickActions = DashboardQuickActions
 
     Surface(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -157,63 +159,64 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = { },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Home,
-                            contentDescription = "Home"
+                NavigationBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp
+                ) {
+                    NavigationBarItem(
+                        selected = true,
+                        onClick = { },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.Home,
+                                contentDescription = "Home"
+                            )
+                        },
+                        label = { Text("Home") },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                         )
-                    },
-                    label = { Text("Home") },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                     )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Apartment,
-                            contentDescription = "Portfolio"
-                        )
-                    },
-                    label = { Text("Portfolio") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.AccountCircle,
-                            contentDescription = "Tenants"
-                        )
-                    },
-                    label = { Text("Tenants") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = "Settings"
-                        )
-                    },
-                    label = { Text("Settings") }
-                )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.Apartment,
+                                contentDescription = "Portfolio"
+                            )
+                        },
+                        label = { Text("Portfolio") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.AccountCircle,
+                                contentDescription = "Tenants"
+                            )
+                        },
+                        label = { Text("Tenants") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Outlined.Settings,
+                                contentDescription = "Settings"
+                            )
+                        },
+                        label = { Text("Settings") }
+                    )
+                }
             }
         }
     }
