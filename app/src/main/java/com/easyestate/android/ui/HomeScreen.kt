@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +60,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -144,33 +148,67 @@ private fun HomeHeader(
 @Composable
 private fun OccupancyCard(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large, // Use large (16.dp) to match `rounded-xl` (1rem)
+        modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OccupancyStat(label = "Units Occupied", value = "45")
-                Divider(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(1.dp),
-                    color = Color.White.copy(alpha = 0.5f)
+            val occupied = 45
+            val vacant = 15
+            val total = occupied + vacant
+
+            OccupancyDonutChart(
+                occupied = occupied,
+                vacant = vacant,
+                total = total,
+                modifier = Modifier.size(100.dp)
+            )
+
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OccupancyStat(
+                    label = "Units Occupied",
+                    value = occupied.toString(),
+                    color = MaterialTheme.colorScheme.primary
                 )
-                OccupancyStat(label = "Vacant", value = "15")
+                OccupancyStat(
+                    label = "Vacant",
+                    value = vacant.toString(),
+                    color = MaterialTheme.colorScheme.tertiary
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun OccupancyDonutChart(
+    occupied: Int,
+    vacant: Int,
+    total: Int,
+    modifier: Modifier = Modifier
+) {
+    val occupiedColor = MaterialTheme.colorScheme.primary
+    val vacantColor = MaterialTheme.colorScheme.tertiary
+
+    val occupiedAngle = 360f * occupied / total
+    val vacantAngle = 360f * vacant / total
+
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawArc(color = vacantColor, startAngle = -90f, sweepAngle = vacantAngle, useCenter = false, style = Stroke(width = 25f, cap = StrokeCap.Round))
+            drawArc(color = occupiedColor, startAngle = -90f + vacantAngle, sweepAngle = occupiedAngle, useCenter = false, style = Stroke(width = 25f, cap = StrokeCap.Round))
+        }
+        Text(text = buildAnnotatedString {
+            append(total.toString())
+        }, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
     }
 }
 
@@ -180,19 +218,48 @@ private fun OccupancyStat(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-        )
-        Text(
-            text = value, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-        )
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Box(modifier = Modifier
+            .size(8.dp)
+            .background(color = color, shape = MaterialTheme.shapes.small))
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun OccupancyStat(
+    label: String,
+    value: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Box(modifier = Modifier
+            .size(8.dp)
+            .background(color = color, shape = MaterialTheme.shapes.small))
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
