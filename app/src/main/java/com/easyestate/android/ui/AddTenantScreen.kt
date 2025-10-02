@@ -1,12 +1,10 @@
 package com.easyestate.android.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraFront
 import androidx.compose.material.icons.outlined.Contacts
@@ -14,6 +12,7 @@ import androidx.compose.material.icons.outlined.FolderShared
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Villa
 import androidx.compose.material.icons.outlined.UploadFile
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,14 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.easyestate.android.ui.theme.* // Import all theme colors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -173,8 +169,7 @@ fun FormSection(
 ) {
     val sectionModifier = if (isCard) {
         Modifier
-            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp))
-            .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
+            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp)) .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
             .padding(24.dp)
     } else {
         Modifier
@@ -269,7 +264,7 @@ fun DocumentUploadButton(
             .clickable(onClick = onClick)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Box(
