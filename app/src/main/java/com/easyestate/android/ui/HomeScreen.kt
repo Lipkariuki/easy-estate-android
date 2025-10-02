@@ -67,6 +67,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.easyestate.android.ui.theme.StitchInfo
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @Composable
@@ -159,7 +160,7 @@ private fun OccupancyCard(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             val occupied = 45
             val vacant = 15
@@ -172,7 +173,7 @@ private fun OccupancyCard(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(100.dp)
             )
 
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OccupancyStat(
                     label = "Units Occupied",
                     value = occupied.toString(),
@@ -181,7 +182,7 @@ private fun OccupancyCard(modifier: Modifier = Modifier) {
                 OccupancyStat(
                     label = "Vacant",
                     value = vacant.toString(),
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = StitchInfo
                 )
             }
         }
@@ -196,7 +197,7 @@ private fun OccupancyDonutChart(
     modifier: Modifier = Modifier
 ) {
     val occupiedColor = MaterialTheme.colorScheme.primary
-    val vacantColor = MaterialTheme.colorScheme.tertiary
+    val vacantColor = StitchInfo
 
     val occupiedAngle = 360f * occupied / total
     val vacantAngle = 360f * vacant / total

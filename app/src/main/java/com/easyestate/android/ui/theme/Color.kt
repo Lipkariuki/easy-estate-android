@@ -20,6 +20,8 @@ val StitchOnTertiary = Color.White
 val StitchTertiaryContainer = Color(0xFFCBF5D7)
 val StitchOnTertiaryContainer = Color(0xFF04210F)
 
+val StitchInfo = Color(0xFF007BFF)
+
 val StitchLightBackground = Color(0xFFF5F7F4)
 val StitchLightOnBackground = Color(0xFF102416)
 val StitchLightSurface = Color(0xFFFFFFFF)
