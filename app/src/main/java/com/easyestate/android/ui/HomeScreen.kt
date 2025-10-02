@@ -107,7 +107,7 @@ fun HomeScreen(
                 OccupancyCard()
             }
             item {
-                QuickActionsGrid(modifier, onAddTenantClick = onAddTenantClick)
+                QuickActionsGrid(onAddTenantClick = onAddTenantClick, onNavigate = onNavigate)
             }
         }
     }
@@ -317,7 +317,11 @@ private data class UnitOverview(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun QuickActionsGrid(modifier: Modifier = Modifier, onAddTenantClick: () -> Unit) {
+private fun QuickActionsGrid(
+    modifier: Modifier = Modifier,
+    onAddTenantClick: () -> Unit,
+    onNavigate: (String) -> Unit
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Quick Actions",

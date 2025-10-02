@@ -176,7 +176,7 @@ fun EasyEstateApp(
     }
 }
 
-private enum class AppDestination(val route: String) {
+enum class AppDestination(val route: String) {
     Landing("landing"),
     Login("login"),
     SignUp("sign_up"),
