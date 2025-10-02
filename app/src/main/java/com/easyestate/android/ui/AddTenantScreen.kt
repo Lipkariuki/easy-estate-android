@@ -5,8 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowForwardIos
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CameraFront
 import androidx.compose.material.icons.outlined.Close
@@ -45,14 +45,15 @@ fun AddTenantScreen(
     var gender by rememberSaveable { mutableStateOf("") }
     var occupation by rememberSaveable { mutableStateOf("") }
 
-    val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        containerColor = TenantSubtleLight,
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = TenantSubtleLight,
+        focusedContainerColor = TenantSubtleLight,
         focusedBorderColor = Color.Transparent,
         unfocusedBorderColor = Color.Transparent,
         errorBorderColor = Color.Transparent,
         disabledBorderColor = Color.Transparent,
         unfocusedPlaceholderColor = TenantPlaceholderLight,
-        textColor = TenantContentLight,
+        unfocusedTextColor = TenantContentLight,
         cursorColor = TenantPrimary, // Use primary
     )
 
@@ -221,14 +222,15 @@ fun GenderDropdown(selectedGender: String, onGenderSelected: (String) -> Unit) {
                 .menuAnchor()
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors( // Corrected here as well
-                containerColor = TenantSubtleLight,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = TenantSubtleLight,
+                focusedContainerColor = TenantSubtleLight,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 errorBorderColor = Color.Transparent,
                 disabledBorderColor = Color.Transparent,
                 unfocusedPlaceholderColor = TenantPlaceholderLight,
-                textColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight, // Use textColor
+                unfocusedTextColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight,
                 cursorColor = TenantPrimary,
             )
         )
@@ -295,7 +297,7 @@ fun DocumentUploadButton(
             )
         }
         Icon(
-            imageVector = Icons.Outlined.ArrowForwardIos,
+            imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             modifier = Modifier.size(18.dp)
