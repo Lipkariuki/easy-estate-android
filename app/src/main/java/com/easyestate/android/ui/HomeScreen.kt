@@ -152,6 +152,39 @@ private fun HomeHeader(
 }
 
 @Composable
+private fun OccupancyCircleStat(
+    label: String,
+    percentage: Int,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(color),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "$percentage%",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
 private fun OccupancyCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large,
@@ -167,78 +200,21 @@ private fun OccupancyCard(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            val occupied = 45
-            val vacant = 15
-            val total = occupied + vacant
+            val occupiedCount = 45
+            val vacantCount = 15
+            val total = occupiedCount + vacantCount
+            val occupiedPercentage = (occupiedCount * 100 / total)
+            val vacantPercentage = (vacantCount * 100 / total)
 
-            OccupancyDonutChart(
-                occupied = occupied,
-                vacant = vacant,
-                total = total,
-                modifier = Modifier.size(100.dp)
+            OccupancyCircleStat(
+                label = "Occupied",
+                percentage = occupiedPercentage,
+                color = MaterialTheme.colorScheme.primary
             )
-
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OccupancyStat(
-                    label = "Units Occupied",
-                    value = occupied.toString(),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                OccupancyStat(
-                    label = "Vacant",
-                    value = vacant.toString(),
-                    color = StitchInfo
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun OccupancyDonutChart(
-    occupied: Int,
-    vacant: Int,
-    total: Int,
-    modifier: Modifier = Modifier
-) {
-    val occupiedColor = MaterialTheme.colorScheme.primary
-    val vacantColor = StitchInfo
-
-    val occupiedAngle = 360f * occupied / total
-    val vacantAngle = 360f * vacant / total
-
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawArc(color = vacantColor, startAngle = -90f, sweepAngle = vacantAngle, useCenter = false, style = Stroke(width = 25f, cap = StrokeCap.Round))
-            drawArc(color = occupiedColor, startAngle = -90f + vacantAngle, sweepAngle = occupiedAngle, useCenter = false, style = Stroke(width = 25f, cap = StrokeCap.Round))
-        }
-        Text(text = buildAnnotatedString {
-            append(total.toString())
-        }, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
-    }
-}
-
-@Composable
-private fun OccupancyStat(
-    label: String,
-    value: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(modifier = Modifier
-            .size(8.dp)
-            .background(color = color, shape = MaterialTheme.shapes.small))
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
+            OccupancyCircleStat(
+                label = "Vacant",
+                percentage = vacantPercentage,
+                color = StitchInfo
             )
         }
     }
