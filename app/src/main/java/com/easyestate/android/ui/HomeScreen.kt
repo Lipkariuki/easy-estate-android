@@ -24,19 +24,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Apartment
-import androidx.compose.material.icons.outlined.BarChart
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Construction
 import androidx.compose.material.icons.outlined.GroupAdd
-import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.SupportAgent
+import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.automirrored.outlined.NoteAdd
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
@@ -148,7 +146,7 @@ private fun HomeHeader(
             }
             IconButton(onClick = onLogout) {
                 Icon(
-                    imageVector = Icons.Outlined.Logout,
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
                     contentDescription = "Logout",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -424,10 +422,10 @@ private data class NavigationItem(
 )
 
 private val DashboardQuickActions = listOf(
-    QuickAction("Send Bills", Icons.Outlined.ReceiptLong),
+    QuickAction("Send Bills", Icons.AutoMirrored.Outlined.ReceiptLong),
     QuickAction("Broadcast", Icons.Outlined.Campaign),
-    QuickAction("Visitor Log", Icons.Outlined.ReceiptLong), // Using ReceiptLong as a substitute for Badge
-    QuickAction("Notice", Icons.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
+    QuickAction("Visitor Log", Icons.AutoMirrored.Outlined.ReceiptLong), // Using ReceiptLong as a substitute for Badge
+    QuickAction("Notice", Icons.AutoMirrored.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
     QuickAction("Payment", Icons.Outlined.Payments),
     QuickAction("Support", Icons.Outlined.SupportAgent),
     QuickAction("Properties", Icons.Outlined.Apartment),
