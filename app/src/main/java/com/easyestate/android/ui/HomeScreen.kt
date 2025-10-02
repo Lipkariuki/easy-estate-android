@@ -3,6 +3,7 @@ package com.easyestate.android.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -17,9 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -63,6 +62,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @Composable
@@ -145,7 +145,7 @@ private fun HomeHeader(
 private fun OccupancyCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.large, // Use large (16.dp) to match `rounded-xl` (1rem)
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -191,7 +191,7 @@ private fun OccupancyStat(
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
         )
         Text(
-            text = value, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+            text = value, style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
@@ -257,6 +257,7 @@ private data class UnitOverview(
     val secondaryLabel: String? = null,
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun QuickActionsGrid(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -265,24 +266,23 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp), // Adjust height to fit 2 rows
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            userScrollEnabled = false
+            maxItemsInEachRow = 4
         ) {
-            items(DashboardQuickActions) { action ->
+            DashboardQuickActions.forEach { action ->
                 QuickActionTile(
                     action = action,
-                    onClick = { /* TODO: Handle action click */ }
+                    onClick = { /* TODO: Handle action click */ },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
     }
 }
+
 
 @Composable
 private fun QuickActionTile(
@@ -290,50 +290,37 @@ private fun QuickActionTile(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.aspectRatio(1f),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+    Column(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.large)
+            .clickable { onClick() }
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .clip(MaterialTheme.shapes.large)
-                .clickable { onClick() }
-                .padding(8.dp),
+                .size(56.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    shape = MaterialTheme.shapes.extraLarge
+                ),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = MaterialTheme.shapes.extraLarge
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = action.icon,
-                        contentDescription = action.title,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = action.title,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            Icon(
+                imageVector = action.icon,
+                contentDescription = action.title,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = action.title,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
