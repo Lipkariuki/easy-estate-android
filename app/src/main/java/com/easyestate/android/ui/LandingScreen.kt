@@ -82,7 +82,7 @@ fun LandingScreen(
                 Text(
                     text = "Streamlining Your Property Management",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = colorScheme.onSurfaceVariant
+                    color = colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
