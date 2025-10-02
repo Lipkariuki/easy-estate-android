@@ -193,7 +193,10 @@ fun HomeScreen(
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(filteredProperties) { property ->
+                    items(
+                        items = filteredProperties,
+                        key = { property -> property.id }
+                    ) { property ->
                         PropertyCard(
                             property = property,
                             onClick = { highlightedPropertyId = property.id }
@@ -312,7 +315,10 @@ private fun QuickActionsRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(quickActions) { action ->
+        items(
+            items = quickActions,
+            key = { action -> action.label }
+        ) { action ->
             QuickActionCard(action = action)
         }
     }
