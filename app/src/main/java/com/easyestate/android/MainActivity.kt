@@ -148,7 +148,12 @@ fun EasyEstateApp(
                 HomeScreen(
                     adminName = uiState.currentAdminName.orEmpty(),
                     onLogout = { authViewModel.logout() },
-                    onAddTenantClick = { navController.navigate(AppDestination.AddTenant.route) }
+                    onAddTenantClick = { navController.navigate(AppDestination.AddTenant.route) },
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         composable(AppDestination.AddTenant.route) {

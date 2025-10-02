@@ -75,6 +75,7 @@ fun HomeScreen(
     hasUnreadNotifications: Boolean = false,
     onLogout: () -> Unit,
     onAddTenantClick: () -> Unit,
+    onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -87,7 +88,11 @@ fun HomeScreen(
                 onLogout = onLogout
             )
         },
-        bottomBar = { HomeNavigationBar() },
+        bottomBar = {
+            HomeNavigationBar(
+                onNavigate = onNavigate
+            )
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
@@ -444,7 +449,7 @@ private val NavigationItems = listOf(
 @Composable
 private fun HomeScreenPreview() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Easy Estate Admin", onLogout = {}, onAddTenantClick = {})
+        HomeScreen(adminName = "Easy Estate Admin", onLogout = {}, onAddTenantClick = {}, onNavigate = {})
     }
 }
 
@@ -452,6 +457,6 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {}, onAddTenantClick = {})
+        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {}, onAddTenantClick = {}, onNavigate = {})
     }
 }
