@@ -33,7 +33,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Construction
-import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.SupportAgent
@@ -426,7 +426,7 @@ private val DashboardQuickActions = listOf(
     QuickAction("Support", Icons.Outlined.SupportAgent),
     QuickAction("Properties", Icons.Outlined.Apartment),
     QuickAction("Maintenance", Icons.Outlined.Construction),
-    QuickAction("Tenants", Icons.Outlined.Groups)
+    QuickAction("Add Tenant", Icons.Outlined.GroupAdd)
 )
 
 private val NavigationItems = listOf(
