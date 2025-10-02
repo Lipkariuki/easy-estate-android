@@ -151,15 +151,15 @@ fun EasyEstateApp(
                     onAddTenantClick = { navController.navigate(AppDestination.AddTenant.route) }
                 )
             }
-            composable(AppDestination.AddTenant.route) {
-                AddTenantScreen(
-                    onClose = { navController.popBackStack() },
-                    onSubmit = { _, _, _, _, _, _ ->
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Tenant submitted (stub)")
-                        }
+        composable(AppDestination.AddTenant.route) {
+            AddTenantScreen(
+                onClose = { navController.popBackStack() },
+                onSubmit = { _, _, _, _, _, _ ->
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Tenant submitted (stub)")
                     }
-                )
+                }
+            )
             }
         }
     }

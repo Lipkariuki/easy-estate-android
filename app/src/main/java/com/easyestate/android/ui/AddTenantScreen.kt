@@ -223,13 +223,14 @@ fun GenderDropdown(selectedGender: String, onGenderSelected: (String) -> Unit) {
                 .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = TenantSubtleLight,
+                focusedContainerColor = TenantSubtleLight,
+                unfocusedContainerColor = TenantSubtleLight,
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
                 errorBorderColor = Color.Transparent,
                 disabledBorderColor = Color.Transparent,
-                placeholderColor = TenantPlaceholderLight,
-                textColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight,
+                unfocusedPlaceholderColor = TenantPlaceholderLight,
+                focusedTextColor = if (selectedGender.isEmpty()) TenantPlaceholderLight else TenantContentLight,
                 cursorColor = TenantPrimary,
             )
         )
