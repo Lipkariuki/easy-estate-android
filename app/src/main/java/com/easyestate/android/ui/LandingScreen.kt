@@ -68,26 +68,37 @@ fun LandingScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Villa,
-                contentDescription = "Easy Estates Logo",
-                tint = Color.White,
-                modifier = Modifier.height(48.dp)
-            )
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Villa,
+                        contentDescription = "Easy Estates Logo",
+                        tint = Color.White,
+                        modifier = Modifier.height(48.dp)
+                    )
+                    Text(
+                        text = "Easy Estates",
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
                 Text(
-                    text = "The Future of Property Management",
+                    text = "Your Partner in Property Management.",
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Manage your properties, tenants, and finances all in one place. Effortlessly.",
+                    text = "Streamlining your properties, tenants, and finances with ease.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center
