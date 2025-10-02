@@ -422,11 +422,6 @@ private fun HomeNavigationBar(
     }
 }
 
-private data class QuickAction(
-    val title: String,
-    val icon: ImageVector,
-)
-
 private data class NavigationItem(
     val title: String,
     val icon: ImageVector,
