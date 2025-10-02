@@ -287,6 +287,7 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier) {
 @Composable
 private fun QuickActionTile(
     action: QuickAction,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
