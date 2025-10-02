@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,11 +22,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
+import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
 import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +49,7 @@ fun EasyEstateApp(
     val uiState = authViewModel.uiState.collectAsStateWithLifecycle().value
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     uiState.event?.let { event ->
         LaunchedEffect(event) {
@@ -101,6 +105,11 @@ fun EasyEstateApp(
                             launchSingleTop = true
                         }
                     },
+                    onForgotPassword = {
+                        navController.navigate(AppDestination.ForgotPassword.route) {
+                            launchSingleTop = true
+                        }
+                    },
                     isLoading = uiState.isLoading,
                     onBack = {
                         if (!navController.popBackStack()) {
@@ -126,6 +135,16 @@ fun EasyEstateApp(
                     isLoading = uiState.isLoading
                 )
             }
+            composable(AppDestination.ForgotPassword.route) {
+                ForgotPasswordScreen(
+                    onBack = { navController.popBackStack() },
+                    onSendReset = { email ->
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Password reset link sent to $email (stub)")
+                        }
+                    }
+                )
+            }
             composable(AppDestination.Home.route) {
                 HomeScreen(
                     adminName = uiState.currentAdminName.orEmpty()
@@ -139,6 +158,7 @@ private enum class AppDestination(val route: String) {
     Landing("landing"),
     Login("login"),
     SignUp("sign_up"),
+    ForgotPassword("forgot_password"),
     Home("home")
 }
 
