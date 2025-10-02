@@ -27,6 +27,7 @@ import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
+import com.easyestate.android.ui.AddUnitScreen
 import com.easyestate.android.ui.AddPropertyScreen
 import com.easyestate.android.ui.PropertiesScreen
 import com.easyestate.android.ui.SignUpScreen
@@ -176,6 +177,14 @@ fun EasyEstateApp(
                         navController.popBackStack()
                     })
             }
+            composable(AppDestination.AddUnit.route) {
+                AddUnitScreen(
+                    onBack = { navController.popBackStack() },
+                    onAddUnit = {
+                        /* TODO: Handle unit submission */
+                        navController.popBackStack()
+                    })
+            }
         composable(AppDestination.AddTenant.route) {
             AddTenantScreen(
                 onClose = { navController.popBackStack() },
@@ -198,6 +207,7 @@ enum class AppDestination(val route: String) {
     Home("home"),
     Properties("properties"),
     AddProperty("add_property"),
+    AddUnit("add_unit"),
     AddTenant("add_tenant"),
 }
 

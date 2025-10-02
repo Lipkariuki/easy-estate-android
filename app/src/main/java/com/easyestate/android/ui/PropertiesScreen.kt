@@ -190,7 +190,7 @@ private fun QuickActionsSection(
                 PropertyActionTile(
                     action = action, onClick = {
                         when (action.title) {
-                            "Add Property" -> onNavigate(AppDestination.AddProperty.route)
+                            "Add Property" -> onNavigate(AppDestination.AddProperty.route) "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
                             else -> { /* TODO: Handle other actions */ }
                         }
                     },
