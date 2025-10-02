@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.easyestate.android.AppDestination
 import com.easyestate.android.R
 import com.easyestate.android.ui.components.HomeNavigationBar
+import com.easyestate.android.ui.theme.StitchInfo
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +125,7 @@ private fun StatsChart() {
             StatCard(
                 label = "Units",
                 value = "60",
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                color = StitchInfo,
                 modifier = Modifier.weight(1f)
             )
         }
