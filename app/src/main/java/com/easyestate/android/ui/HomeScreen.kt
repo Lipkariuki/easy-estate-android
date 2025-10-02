@@ -66,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.easyestate.android.AppDestination
 import com.easyestate.android.ui.theme.StitchInfo
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
@@ -333,7 +334,7 @@ private fun QuickActionsGrid(modifier: Modifier = Modifier, onAddTenantClick: ()
                 QuickActionTile(
                     action = action, onClick = {
                         when (action.title) {
-                            "Add Tenant" -> onAddTenantClick()
+                            "Add Tenant" -> onAddTenantClick() "Properties" -> onNavigate(AppDestination.Properties.route)
                             // TODO: Handle other actions
                             else -> {}
                         }
@@ -441,10 +442,10 @@ private val DashboardQuickActions = listOf(
 )
 
 private val NavigationItems = listOf(
-    NavigationItem("Home", Icons.Outlined.Home, "home"),
-    NavigationItem("Properties", Icons.Outlined.Apartment, "properties"),
-    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, "finances"),
-    NavigationItem("Account", Icons.Outlined.AccountCircle, "account")
+    NavigationItem("Home", Icons.Outlined.Home, AppDestination.Home.route),
+    NavigationItem("Properties", Icons.Outlined.Apartment, AppDestination.Properties.route),
+    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, "finances"), // Assuming this will be a future route
+    NavigationItem("Account", Icons.Outlined.AccountCircle, "account") // Assuming this will be a future route
 )
 
 @Preview(showBackground = true)

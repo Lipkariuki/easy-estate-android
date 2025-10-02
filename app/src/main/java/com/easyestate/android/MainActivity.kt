@@ -27,6 +27,7 @@ import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
+import com.easyestate.android.ui.PropertiesScreen
 import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
 import kotlinx.coroutines.launch
@@ -156,6 +157,11 @@ fun EasyEstateApp(
                     }
                 )
             }
+            composable(AppDestination.Properties.route) {
+                PropertiesScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
         composable(AppDestination.AddTenant.route) {
             AddTenantScreen(
                 onClose = { navController.popBackStack() },
@@ -176,6 +182,7 @@ private enum class AppDestination(val route: String) {
     SignUp("sign_up"),
     ForgotPassword("forgot_password"),
     Home("home"),
+    Properties("properties"),
     AddTenant("add_tenant"),
 }
 
