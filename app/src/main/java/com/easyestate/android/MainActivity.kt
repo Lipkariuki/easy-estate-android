@@ -69,6 +69,14 @@ fun EasyEstateApp(
                     }
                     snackbarHostState.showSnackbar("Hi ${event.adminName}! You're in as admin.")
                 }
+                is AuthUiEvent.NavigateToLanding -> {
+                    navController.navigate(AppDestination.Landing.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
             }
             authViewModel.consumeEvent()
         }
@@ -137,7 +145,8 @@ fun EasyEstateApp(
             }
             composable(AppDestination.Home.route) {
                 HomeScreen(
-                    adminName = uiState.currentAdminName.orEmpty()
+                    adminName = uiState.currentAdminName.orEmpty(),
+                    onLogout = { authViewModel.logout() }
                 )
             }
         }

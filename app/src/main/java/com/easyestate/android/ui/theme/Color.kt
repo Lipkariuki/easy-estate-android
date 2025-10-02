@@ -24,7 +24,7 @@ val StitchInfo = Color(0xFF007BFF)
 
 val StitchLightBackground = Color(0xFFF5F7F4)
 val StitchLightOnBackground = Color(0xFF102416)
-val StitchLightSurface = Color(0xFFFFFFFF)
+val StitchLightSurface = Color(0xFFFDFDFD)
 val StitchLightOnSurface = Color(0xFF102416)
 
 val StitchDarkBackground = Color(0xFF0F1E14)

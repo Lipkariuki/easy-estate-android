@@ -63,6 +63,12 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(event = AuthUiEvent.NavigateToLanding) }
+        }
+    }
+
     fun consumeEvent() {
         _uiState.update { it.copy(event = null) }
     }
@@ -101,6 +107,7 @@ data class AuthUiState(
 sealed interface AuthUiEvent {
     data class Message(val message: String, val navigateBackToLogin: Boolean = false) : AuthUiEvent
     data class NavigateHome(val adminName: String) : AuthUiEvent
+    data object NavigateToLanding : AuthUiEvent
 }
 
 data class AdminAccount(

@@ -74,7 +74,7 @@ fun LandingScreen(
             ) {
                 Text(
                     text = "Easy Estates",
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.displayLarge,
                     color = colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.ReceiptLong
@@ -74,6 +75,7 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 fun HomeScreen(
     adminName: String,
     hasUnreadNotifications: Boolean = false,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -82,7 +84,8 @@ fun HomeScreen(
             HomeHeader(
                 adminName = adminName,
                 hasUnreadNotifications = hasUnreadNotifications,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                onLogout = onLogout
             )
         },
         bottomBar = { HomeNavigationBar() },
@@ -107,7 +110,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeHeader(
-    adminName: String, hasUnreadNotifications: Boolean, modifier: Modifier = Modifier
+    adminName: String, hasUnreadNotifications: Boolean, onLogout: () -> Unit, modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -141,6 +144,13 @@ private fun HomeHeader(
                         contentDescription = "Notifications", tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            }
+            IconButton(onClick = onLogout) {
+                Icon(
+                    imageVector = Icons.Outlined.Logout,
+                    contentDescription = "Logout",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -430,7 +440,7 @@ private val NavigationItems = listOf(
 @Composable
 private fun HomeScreenPreview() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Easy Estate Admin")
+        HomeScreen(adminName = "Easy Estate Admin", onLogout = {})
     }
 }
 
@@ -438,6 +448,6 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Philip", hasUnreadNotifications = true)
+        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {})
     }
 }
