@@ -99,7 +99,7 @@ fun PropertiesScreen(
                     StatsChart()
                 }
                 item {
-                    QuickActionsSection()
+                    QuickActionsSection(onNavigate = onNavigate)
                 }
             }
         }
@@ -163,7 +163,9 @@ private fun StatCard(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun QuickActionsSection() {
+private fun QuickActionsSection(
+    onNavigate: (String) -> Unit
+) {
     val actions = listOf(
         QuickAction("Add Property", Icons.Outlined.AddBusiness),
         QuickAction("Add Unit", Icons.Outlined.AddHome),
