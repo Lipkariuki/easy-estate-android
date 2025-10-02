@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -24,6 +28,7 @@ import com.easyestate.android.ui.AuthUiEvent
 import com.easyestate.android.ui.AuthViewModel
 import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
+import com.easyestate.android.ui.QuickAction
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
 import com.easyestate.android.ui.SignUpScreen
@@ -146,8 +151,22 @@ fun EasyEstateApp(
                 )
             }
             composable(AppDestination.Home.route) {
+                val quickActions = remember {
+                    listOf(
+                        QuickAction(label = "Add property", icon = Icons.Outlined.List, onClick = {}),
+                        QuickAction(label = "Invite tenant", icon = Icons.Outlined.Person, onClick = {}),
+                        QuickAction(label = "Send notice", icon = Icons.Outlined.MailOutline, onClick = {}),
+                    )
+                }
                 HomeScreen(
-                    adminName = uiState.currentAdminName.orEmpty()
+                    adminName = uiState.currentAdminName.orEmpty(),
+                    occupiedUnits = 24,
+                    vacantUnits = 6,
+                    quickActions = quickActions,
+                    onSelectHome = {},
+                    onSelectProperties = {},
+                    onSelectMessages = {},
+                    onSelectProfile = {}
                 )
             }
         }
