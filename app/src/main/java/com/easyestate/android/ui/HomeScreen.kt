@@ -1,22 +1,28 @@
 package com.easyestate.android.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Home
@@ -24,11 +30,17 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Campaign
+import androidx.compose.material.icons.outlined.Construction
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.NoteAdd
+import androidx.compose.material.icons.outlined.Payments
+import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material3.Badge
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,11 +48,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,74 +71,38 @@ fun HomeScreen(
     hasUnreadNotifications: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val quickActions = DashboardQuickActions
-    val gridColumns = 4
-
-    Surface(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            HomeHeader(
+                adminName = adminName,
+                hasUnreadNotifications = hasUnreadNotifications,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        },
+        bottomBar = { HomeNavigationBar() },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(gridColumns),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 24.dp)
-            ) {
-                item(span = { GridItemSpan(gridColumns) }) {
-                    HomeHeader(
-                        adminName = adminName,
-                        hasUnreadNotifications = hasUnreadNotifications,
-                        modifier = Modifier.padding(vertical = 32.dp)
-                    )
-                }
-
-                item(span = { GridItemSpan(gridColumns) }) {
-                    OccupancyCard(modifier = Modifier.padding(bottom = 16.dp))
-                }
-
-                item(span = { GridItemSpan(gridColumns) }) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Quick Actions",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        TextButton(
-                            onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                        ) {
-                            Text("View All")
-                        }
-                    }
-                }
-
-                items(quickActions) { action ->
-                    QuickActionTile(action = action)
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+            item {
+                OccupancyCard()
             }
-
-            HomeNavigationBar()
+            item {
+                QuickActionsGrid()
+            }
         }
     }
 }
 
 @Composable
 private fun HomeHeader(
-    adminName: String,
-    hasUnreadNotifications: Boolean,
-    modifier: Modifier = Modifier
+    adminName: String, hasUnreadNotifications: Boolean, modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -129,13 +111,13 @@ private fun HomeHeader(
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "Welcome back",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                text = "Good Afternoon,",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = adminName,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
@@ -144,17 +126,14 @@ private fun HomeHeader(
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = "Search",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            BadgedBox(
-                badge = { if (hasUnreadNotifications) Badge() }
-            ) {
+            BadgedBox(badge = { if (hasUnreadNotifications) Badge() }) {
                 IconButton(onClick = { }) {
                     Icon(
                         imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Notifications",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        contentDescription = "Notifications", tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -166,7 +145,7 @@ private fun HomeHeader(
 private fun OccupancyCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -175,21 +154,21 @@ private fun OccupancyCard(modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(16.dp)
         ) {
-            Text(
-                text = "Occupancy Overview",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                OccupancyStat(label = "Occupied", value = "48")
-                OccupancyStat(label = "Vacant", value = "12")
-                OccupancyStat(label = "Upcoming", value = "5")
+                OccupancyStat(label = "Units Occupied", value = "45")
+                Divider(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(1.dp),
+                    color = Color.White.copy(alpha = 0.5f)
+                )
+                OccupancyStat(label = "Vacant", value = "15")
             }
         }
     }
@@ -201,15 +180,18 @@ private fun OccupancyStat(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
         )
         Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+            text = value, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
@@ -276,35 +258,26 @@ private data class UnitOverview(
 )
 
 @Composable
-private fun QuickActionTile(
-    action: QuickAction,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.aspectRatio(1f),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+private fun QuickActionsGrid(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = "Quick Actions",
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-    ) {
-        Box(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .height(220.dp), // Adjust height to fit 2 rows
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            userScrollEnabled = false
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = action.icon,
-                    contentDescription = action.title
-                )
-                Text(
-                    text = action.title,
-                    style = MaterialTheme.typography.labelMedium
+            items(DashboardQuickActions) { action ->
+                QuickActionTile(
+                    action = action,
+                    onClick = { /* TODO: Handle action click */ }
                 )
             }
         }
@@ -312,43 +285,82 @@ private fun QuickActionTile(
 }
 
 @Composable
-private fun HomeNavigationBar(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.height(24.dp))
-
-        NavigationBar(
-            modifier = Modifier.fillMaxWidth(),
+private fun QuickActionTile(
+    action: QuickAction,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.aspectRatio(1f),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
-            tonalElevation = 0.dp
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(MaterialTheme.shapes.large)
+                .clickable { onClick() }
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
         ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = MaterialTheme.shapes.extraLarge
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = action.icon,
+                        contentDescription = action.title,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = action.title,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun HomeNavigationBar(modifier: Modifier = Modifier) {
+    var selectedItem by remember { mutableIntStateOf(0) }
+    val items = NavigationItems
+
+    NavigationBar(
+        modifier = modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp
+    ) {
+        items.forEachIndexed { index, item ->
+            val isSelected = selectedItem == index
             NavigationBarItem(
-                selected = true,
-                onClick = { },
-                icon = { Icon(imageVector = Icons.Outlined.Home, contentDescription = "Home") },
-                label = { Text("Home") },
+                selected = isSelected,
+                onClick = { selectedItem = index },
+                icon = { Icon(imageVector = item.icon, contentDescription = item.title, modifier = Modifier.size(30.dp)) },
+                label = { Text(item.title, style = MaterialTheme.typography.bodySmall) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
-                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.surface
                 )
-            )
-            NavigationBarItem(
-                selected = false,
-                onClick = { },
-                icon = { Icon(imageVector = Icons.Outlined.Apartment, contentDescription = "Portfolio") },
-                label = { Text("Portfolio") }
-            )
-            NavigationBarItem(
-                selected = false,
-                onClick = { },
-                icon = { Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = "Tenants") },
-                label = { Text("Tenants") }
-            )
-            NavigationBarItem(
-                selected = false,
-                onClick = { },
-                icon = { Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings") },
-                label = { Text("Settings") }
             )
         }
     }
@@ -359,15 +371,28 @@ private data class QuickAction(
     val icon: ImageVector,
 )
 
+private data class NavigationItem(
+    val title: String,
+    val icon: ImageVector
+)
+
 private val DashboardQuickActions = listOf(
-    QuickAction("New Lease", Icons.Outlined.ReceiptLong),
-    QuickAction("Add Unit", Icons.Outlined.Apartment),
-    QuickAction("Analytics", Icons.Outlined.BarChart),
-    QuickAction("Profile", Icons.Outlined.AccountCircle),
-    QuickAction("Payments", Icons.Outlined.ReceiptLong),
-    QuickAction("Maintenance", Icons.Outlined.Settings),
-    QuickAction("Reports", Icons.Outlined.BarChart),
-    QuickAction("Support", Icons.Outlined.Settings)
+    QuickAction("Send Bills", Icons.Outlined.ReceiptLong),
+    QuickAction("Broadcast", Icons.Outlined.Campaign),
+    QuickAction("Visitor Log", Icons.Outlined.BarChart), // Using BarChart as a substitute for badge
+    QuickAction("Notice", Icons.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
+    QuickAction("Payment", Icons.Outlined.Payments),
+    QuickAction("Support", Icons.Outlined.SupportAgent),
+    QuickAction("Properties", Icons.Outlined.Apartment),
+    QuickAction("Maintenance", Icons.Outlined.Construction)
+)
+
+private val NavigationItems = listOf(
+    NavigationItem("Home", Icons.Outlined.Home),
+    NavigationItem("Properties", Icons.Outlined.Apartment),
+    NavigationItem("Tenants", Icons.Outlined.Groups),
+    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet),
+    NavigationItem("Account", Icons.Outlined.AccountCircle)
 )
 
 @Preview(showBackground = true)
@@ -382,6 +407,6 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Easy Estate Admin", hasUnreadNotifications = true)
+        HomeScreen(adminName = "Philip", hasUnreadNotifications = true)
     }
 }
