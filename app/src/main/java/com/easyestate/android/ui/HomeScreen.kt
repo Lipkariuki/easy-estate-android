@@ -216,31 +216,6 @@ private fun OccupancyDonutChart(
 private fun OccupancyStat(
     label: String,
     value: String,
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(modifier = Modifier
-            .size(8.dp)
-            .background(color = color, shape = MaterialTheme.shapes.small))
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-@Composable
-private fun OccupancyStat(
-    label: String,
-    value: String,
     color: Color,
     modifier: Modifier = Modifier
 ) {
