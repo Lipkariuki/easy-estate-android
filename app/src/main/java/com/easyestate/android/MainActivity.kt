@@ -159,7 +159,12 @@ fun EasyEstateApp(
             }
             composable(AppDestination.Properties.route) {
                 PropertiesScreen(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         composable(AppDestination.AddTenant.route) {

@@ -3,7 +3,20 @@ package com.easyestate.android.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,12 +37,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easyestate.android.R
+import com.easyestate.android.ui.components.HomeNavigationBar
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertiesScreen(
     onBack: () -> Unit,
+    onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -65,7 +80,12 @@ fun PropertiesScreen(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            bottomBar = {
+                HomeNavigationBar(
+                    onNavigate = onNavigate
+                )
+            }
         ) { paddingValues ->
             LazyColumn(
                 modifier = Modifier
@@ -140,6 +160,7 @@ private fun StatCard(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun QuickActionsSection() {
     val actions = listOf(
@@ -155,7 +176,12 @@ private fun QuickActionsSection() {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            maxItemsInEachRow = 2
+        ) {
             actions.forEach { action ->
                 PropertyActionTile(
                     action = action,
@@ -207,6 +233,6 @@ data class QuickAction(
 @Composable
 private fun PropertiesScreenPreview() {
     EasyEstateTheme {
-        PropertiesScreen(onBack = {})
+        PropertiesScreen(onBack = {}, onNavigate = {})
     }
 }

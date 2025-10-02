@@ -19,14 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.Apartment
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.Construction
 import androidx.compose.material.icons.outlined.GroupAdd
@@ -35,18 +27,15 @@ import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.automirrored.outlined.NoteAdd
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easyestate.android.AppDestination
+import com.easyestate.android.ui.components.HomeNavigationBar
 import com.easyestate.android.ui.theme.StitchInfo
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
@@ -391,48 +381,6 @@ private fun QuickActionTile(
     }
 }
 
-
-@Composable
-private fun HomeNavigationBar(
-    modifier: Modifier = Modifier,
-    onNavigate: (String) -> Unit
-) {
-    var selectedItem by remember { mutableIntStateOf(0) }
-    val items = NavigationItems
-
-    NavigationBar(
-        modifier = modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp
-    ) {
-        items.forEachIndexed { index, item ->
-            val isSelected = selectedItem == index
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    selectedItem = index
-                    onNavigate(item.route)
-                },
-                icon = { Icon(imageVector = item.icon, contentDescription = item.title, modifier = Modifier.size(30.dp)) },
-                label = { Text(item.title, style = MaterialTheme.typography.bodySmall) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    }
-}
-
-private data class NavigationItem(
-    val title: String,
-    val icon: ImageVector,
-    val route: String
-)
-
 private val DashboardQuickActions = listOf(
     QuickAction("Send Bills", Icons.AutoMirrored.Outlined.ReceiptLong),
     QuickAction("Broadcast", Icons.Outlined.Campaign),
@@ -443,13 +391,6 @@ private val DashboardQuickActions = listOf(
     QuickAction("Properties", Icons.Outlined.Apartment),
     QuickAction("Maintenance", Icons.Outlined.Construction),
     QuickAction("Add Tenant", Icons.Outlined.GroupAdd)
-)
-
-private val NavigationItems = listOf(
-    NavigationItem("Home", Icons.Outlined.Home, AppDestination.Home.route),
-    NavigationItem("Properties", Icons.Outlined.Apartment, AppDestination.Properties.route),
-    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, "finances"), // Assuming this will be a future route
-    NavigationItem("Account", Icons.Outlined.AccountCircle, "account") // Assuming this will be a future route
 )
 
 @Preview(showBackground = true)
