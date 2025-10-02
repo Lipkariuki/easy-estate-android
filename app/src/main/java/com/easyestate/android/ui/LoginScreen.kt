@@ -44,6 +44,7 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 fun LoginScreen(
     onSignIn: (email: String, password: String) -> Unit,
     onSignUp: () -> Unit,
+    onForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     onBack: () -> Unit = {}
@@ -153,7 +154,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-                    TextButton(onClick = { }) {
+                    TextButton(onClick = onForgotPassword) {
                         Text(
                             text = "Forgot Password?",
                             style = MaterialTheme.typography.bodyMedium,
@@ -215,7 +216,7 @@ fun LoginScreen(
 @Composable
 private fun LoginScreenPreview() {
     EasyEstateTheme {
-        LoginScreen(onSignIn = { _, _ -> }, onSignUp = {})
+        LoginScreen(onSignIn = { _, _ -> }, onSignUp = {}, onForgotPassword = {})
     }
 }
 
@@ -223,6 +224,6 @@ private fun LoginScreenPreview() {
 @Composable
 private fun LoginScreenLoadingPreview() {
     EasyEstateTheme {
-        LoginScreen(onSignIn = { _, _ -> }, onSignUp = {}, isLoading = true)
+        LoginScreen(onSignIn = { _, _ -> }, onSignUp = {}, onForgotPassword = {}, isLoading = true)
     }
 }
