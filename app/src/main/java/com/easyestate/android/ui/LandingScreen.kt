@@ -64,40 +64,39 @@ fun LandingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.weight(1f))
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "E",
+                    text = "Easy Estates",
                     style = MaterialTheme.typography.displayLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 80.sp
+                        fontSize = 56.sp
                     ),
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
                 Text(
                     text = "Your Partner in Property Management.",
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 16.dp)
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Streamlining your properties, tenants, and finances with ease.",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp)
+                    textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.weight(1f))
             }
+
+            Spacer(modifier = Modifier.weight(1f))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
