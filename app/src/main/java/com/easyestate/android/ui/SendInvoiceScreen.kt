@@ -2,10 +2,12 @@ package com.easyestate.android.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -37,6 +39,11 @@ fun SendInvoiceScreen(
     onSendInvoice: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var property by rememberSaveable { mutableStateOf("") }
+    var tenant by rememberSaveable { mutableStateOf("") }
+    var date by rememberSaveable { mutableStateOf("") }
+    var dueDate by rememberSaveable { mutableStateOf("") }
+
     val invoiceItems = remember { mutableStateListOf(InvoiceItem(0, amount = 1200.0), InvoiceItem(1, type = "Water", amount = 50.0)) }
     var taxPercent by rememberSaveable { mutableStateOf("0") }
 
@@ -45,6 +52,18 @@ fun SendInvoiceScreen(
     val total = subtotal + taxAmount
 
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.US) }
+
+    val formFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+        unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+        unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+    )
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -60,7 +79,7 @@ fun SendInvoiceScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Outlined.Close, contentDescription = "Close")
                     }
                 },
                 actions = {
@@ -97,7 +116,63 @@ fun SendInvoiceScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item {
-                // Form fields for property, tenant, dates
+                FormField(label = "Select Property") {
+                    var expanded by remember { mutableStateOf(false) }
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }
+                    ) {
+                        TextField(
+                            value = property,
+                            onValueChange = { property = it },
+                            readOnly = true,
+                            placeholder = { Text("The Grand Apartments") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                            modifier = Modifier.menuAnchor().fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = formFieldColors
+                        )
+                        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            listOf("The Grand Apartments", "Lakeside Villa", "Downtown Lofts").forEach { selection ->
+                                DropdownMenuItem(text = { Text(selection) }, onClick = {
+                                    property = selection
+                                    expanded = false
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                FormField(label = "Search for Tenant") {
+                    TextField(
+                        value = tenant,
+                        onValueChange = { tenant = it },
+                        placeholder = { Text("John Doe") },
+                        leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = "Search") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = formFieldColors,
+                        singleLine = true
+                    )
+                }
+            }
+
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    FormField(label = "Date", modifier = Modifier.weight(1f)) {
+                        DateField(value = date, onValueChange = { date = it }, placeholder = "Select Date")
+                    }
+                    FormField(label = "Due Date", modifier = Modifier.weight(1f)) {
+                        DateField(
+                            value = dueDate,
+                            onValueChange = { dueDate = it },
+                            placeholder = "Select Due Date",
+                            icon = Icons.Outlined.EventAvailable
+                        )
+                    }
+                }
             }
 
             item {
@@ -107,14 +182,18 @@ fun SendInvoiceScreen(
             }
 
             item {
-                OutlinedTextField(
-                    value = taxPercent,
-                    onValueChange = { taxPercent = it },
-                    label = { Text("Tax (%)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    shape = RoundedCornerShape(12.dp)
-                )
+                FormField(label = "Tax (%)") {
+                    TextField(
+                        value = taxPercent,
+                        onValueChange = { taxPercent = it },
+                        placeholder = { Text("e.g. 5") },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = formFieldColors,
+                        singleLine = true
+                    )
+                }
             }
 
             item {
@@ -129,6 +208,40 @@ fun SendInvoiceScreen(
 }
 
 @Composable
+private fun FormField(label: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        content()
+    }
+}
+
+@Composable
+private fun DateField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    icon: ImageVector = Icons.Outlined.CalendarToday
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = { Text(placeholder) },
+        trailingIcon = { Icon(icon, contentDescription = null) },
+        modifier = Modifier.fillMaxWidth().clickable { /* TODO: Show Date Picker */ },
+        shape = RoundedCornerShape(12.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+            unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        singleLine = true
+    )
+}
+
+@Composable
 private fun ItemsSection(
     items: List<InvoiceItem>,
     onAddItem: () -> Unit
@@ -138,7 +251,7 @@ private fun ItemsSection(
         Column(
             modifier = Modifier
                 .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                     RoundedCornerShape(16.dp)
                 )
                 .padding(16.dp),
@@ -193,6 +306,15 @@ private fun InvoiceItemRow(
         )
     }
 
+    val itemFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = MaterialTheme.colorScheme.background,
+        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+        disabledContainerColor = MaterialTheme.colorScheme.background,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+    )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -204,38 +326,42 @@ private fun InvoiceItemRow(
             onExpandedChange = { expanded = !expanded },
             modifier = Modifier.weight(2f)
         ) {
-            OutlinedTextField(
+            TextField(
                 value = type,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier.menuAnchor(),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                colors = itemFieldColors
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 listOf("Rent", "Water", "Deposit", "Other").forEach { selection ->
                     DropdownMenuItem(text = { Text(selection) }, onClick = {
                         type = selection
                         expanded = false
-                    })
+                    }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding)
                 }
             }
         }
-        OutlinedTextField(
+        TextField(
             value = quantity,
             onValueChange = { quantity = it },
             modifier = Modifier.weight(1f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = itemFieldColors,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
         )
-        OutlinedTextField(
+        TextField(
             value = amount,
             onValueChange = { amount = it },
             modifier = Modifier.weight(2f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             shape = RoundedCornerShape(8.dp),
+            colors = itemFieldColors,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
         )
     }
