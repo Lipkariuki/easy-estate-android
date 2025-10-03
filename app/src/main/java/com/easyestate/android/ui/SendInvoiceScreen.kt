@@ -335,14 +335,13 @@ private fun InvoiceItemRow(
     onRemove: () -> Unit
 ) {
     var type by remember { mutableStateOf(item.type) }
-    var quantity by remember { mutableStateOf(item.quantity.toString()) }
     var amount by remember { mutableStateOf(item.amount.toString()) }
 
-    LaunchedEffect(type, quantity, amount) {
+    LaunchedEffect(type, amount) {
         onItemChange(
             item.copy(
                 type = type,
-                quantity = quantity.toIntOrNull() ?: 1,
+                quantity = 1, // Default quantity to 1
                 amount = amount.toDoubleOrNull() ?: 0.0
             )
         )
@@ -366,7 +365,7 @@ private fun InvoiceItemRow(
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.weight(2f)
+            modifier = Modifier.weight(1f)
         ) {
             TextField(
                 value = type,
@@ -387,19 +386,10 @@ private fun InvoiceItemRow(
             }
         }
         TextField(
-            value = quantity,
-            onValueChange = { quantity = it },
-            modifier = Modifier.weight(1f),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            singleLine = true,
-            shape = RoundedCornerShape(8.dp),
-            colors = itemFieldColors,
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
-        )
-        TextField(
             value = amount,
             onValueChange = { amount = it },
-            modifier = Modifier.weight(2f),
+            placeholder = { Text("Amount") },
+            modifier = Modifier.weight(1f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
             shape = RoundedCornerShape(8.dp),
