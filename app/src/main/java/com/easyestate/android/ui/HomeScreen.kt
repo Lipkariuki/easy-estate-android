@@ -305,7 +305,8 @@ private fun QuickActionsGrid(
                 QuickActionTile(
                     action = action, onClick = {
                         when (action.title) {
-                            "Add Tenant" -> onAddTenantClick() "Properties" -> onNavigate(AppDestination.Properties.route)
+                            "Add Tenant" -> onAddTenantClick()
+                            "Properties" -> onNavigate(AppDestination.Properties.route) "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
                             // TODO: Handle other actions
                             else -> {}
                         }

@@ -27,6 +27,7 @@ import com.easyestate.android.ui.ForgotPasswordScreen
 import com.easyestate.android.ui.HomeScreen
 import com.easyestate.android.ui.LandingScreen
 import com.easyestate.android.ui.LoginScreen
+import com.easyestate.android.ui.SendInvoiceScreen
 import com.easyestate.android.ui.AddUnitScreen
 import com.easyestate.android.ui.AddPropertyScreen
 import com.easyestate.android.ui.PropertiesScreen
@@ -185,6 +186,14 @@ fun EasyEstateApp(
                         navController.popBackStack()
                     })
             }
+            composable(AppDestination.SendInvoice.route) {
+                SendInvoiceScreen(
+                    onBack = { navController.popBackStack() },
+                    onSendInvoice = {
+                        /* TODO: Handle invoice submission */
+                        navController.popBackStack()
+                    })
+            }
         composable(AppDestination.AddTenant.route) {
             AddTenantScreen(
                 onClose = { navController.popBackStack() },
@@ -208,6 +217,7 @@ enum class AppDestination(val route: String) {
     Properties("properties"),
     AddProperty("add_property"),
     AddUnit("add_unit"),
+    SendInvoice("send_invoice"),
     AddTenant("add_tenant"),
 }
 
