@@ -29,7 +29,6 @@ import java.util.Locale
 data class InvoiceItem(
     val id: Int,
     var type: String = "Rent",
-    var description: String = "",
     var quantity: Int = 1,
     var amount: Double = 0.0
 )
@@ -46,6 +45,7 @@ fun SendInvoiceScreen(
     var date by rememberSaveable { mutableStateOf("") }
     var dueDate by rememberSaveable { mutableStateOf("") }
 
+    var notes by rememberSaveable { mutableStateOf("") }
     var isTaxEnabled by rememberSaveable { mutableStateOf(false) }
     val invoiceItems = remember { mutableStateListOf(InvoiceItem(0, amount = 1200.0), InvoiceItem(1, type = "Water", amount = 50.0)) }
     var taxPercent by rememberSaveable { mutableStateOf("0") }
@@ -219,6 +219,21 @@ fun SendInvoiceScreen(
             }
 
             item {
+                FormField(label = "Notes") {
+                    TextField(
+                        value = notes,
+                        onValueChange = { notes = it },
+                        placeholder = { Text("Add any comments for 'Other' items or general notes here.") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = formFieldColors
+                    )
+                }
+            }
+
+            item {
                 TotalsSummary(
                     subtotal = currencyFormat.format(subtotal),
                     tax = currencyFormat.format(taxAmount),
@@ -320,15 +335,13 @@ private fun InvoiceItemRow(
     onRemove: () -> Unit
 ) {
     var type by remember { mutableStateOf(item.type) }
-    var description by remember { mutableStateOf(item.description) }
     var quantity by remember { mutableStateOf(item.quantity.toString()) }
     var amount by remember { mutableStateOf(item.amount.toString()) }
 
-    LaunchedEffect(type, description, quantity, amount) {
+    LaunchedEffect(type, quantity, amount) {
         onItemChange(
             item.copy(
                 type = type,
-                description = description,
                 quantity = quantity.toIntOrNull() ?: 1,
                 amount = amount.toDoubleOrNull() ?: 0.0
             )
@@ -344,72 +357,59 @@ private fun InvoiceItemRow(
         disabledIndicatorColor = Color.Transparent,
     )
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.weight(2f)
         ) {
-            var expanded by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-                modifier = Modifier.weight(2f)
-            ) {
-                TextField(
-                    value = type,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier.menuAnchor(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = itemFieldColors
-                )
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    listOf("Rent", "Water", "Deposit", "Other").forEach { selection ->
-                        DropdownMenuItem(text = { Text(selection) }, onClick = {
-                            type = selection
-                            expanded = false
-                        }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding)
-                    }
+            TextField(
+                value = type,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor(),
+                shape = RoundedCornerShape(8.dp),
+                colors = itemFieldColors
+            )
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                listOf("Rent", "Water", "Deposit", "Other").forEach { selection ->
+                    DropdownMenuItem(text = { Text(selection) }, onClick = {
+                        type = selection
+                        expanded = false
+                    }, contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding)
                 }
             }
-            TextField(
-                value = quantity,
-                onValueChange = { quantity = it },
-                modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = itemFieldColors,
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
-            )
-            TextField(
-                value = amount,
-                onValueChange = { amount = it },
-                modifier = Modifier.weight(2f),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                colors = itemFieldColors,
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
-            )
-            IconButton(onClick = onRemove) {
-                Icon(
-                    imageVector = Icons.Outlined.RemoveCircleOutline,
-                    contentDescription = "Remove Item"
-                )
-            }
         }
-        if (type == "Other") {
-            TextField(
-                value = description,
-                onValueChange = { description = it },
-                placeholder = { Text("Description for 'Other'") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = itemFieldColors,
-                singleLine = true
+        TextField(
+            value = quantity,
+            onValueChange = { quantity = it },
+            modifier = Modifier.weight(1f),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            colors = itemFieldColors,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
+        )
+        TextField(
+            value = amount,
+            onValueChange = { amount = it },
+            modifier = Modifier.weight(2f),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            colors = itemFieldColors,
+            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End)
+        )
+        IconButton(onClick = onRemove) {
+            Icon(
+                imageVector = Icons.Outlined.RemoveCircleOutline,
+                contentDescription = "Remove Item"
             )
         }
     }
