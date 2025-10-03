@@ -179,11 +179,15 @@ fun SendInvoiceScreen(
             }
 
             item {
-                ItemsSection(invoiceItems) {
-                    invoiceItems.add(InvoiceItem(id = (invoiceItems.lastOrNull()?.id ?: -1) + 1))
-                }, onRemoveItem = { item ->
-                    invoiceItems.remove(item)
-                }
+                ItemsSection(
+                    items = invoiceItems,
+                    onAddItem = {
+                        invoiceItems.add(InvoiceItem(id = (invoiceItems.lastOrNull()?.id ?: -1) + 1))
+                    },
+                    onRemoveItem = { item ->
+                        invoiceItems.remove(item)
+                    }
+                )
             }
 
             item {
