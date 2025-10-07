@@ -182,20 +182,20 @@ private fun QuickActionsSection(
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            maxItemsInEachRow = 3
         ) {
             actions.forEach { action ->
                 PropertyActionTile(
-                    action = action, onClick = {
+                    action = action,
+                    onClick = {
                         when (action.title) {
                             "Add Property" -> onNavigate(AppDestination.AddProperty.route)
                             "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
                             else -> { /* TODO: Handle other actions */ }
-                        } ,
-                    },
-                    modifier = Modifier.fillMaxWidth(0.5f).padding(end = 8.dp) // Use fillMaxWidth with a fraction
+                        }
+                    }
                 )
             }
         }
@@ -205,11 +205,10 @@ private fun QuickActionsSection(
 @Composable
 private fun PropertyActionTile(
     action: QuickAction,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surface)

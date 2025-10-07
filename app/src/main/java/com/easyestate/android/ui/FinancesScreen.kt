@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Arrangement.Horizontal
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,7 +43,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -102,17 +101,14 @@ fun FinancesScreen(
                 contentPadding = PaddingValues(24.dp),
                 verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
-                item {
-                    FinanceSnapshot()
-                }
-                item {
-                    FinancesQuickActions()
-                }
+                item { FinanceSnapshot() }
+                item { FinancesQuickActions() }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FinanceSnapshot() {
     val surface = MaterialTheme.colorScheme.surface
@@ -133,25 +129,17 @@ private fun FinanceSnapshot() {
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = onSurface
         )
-        Row(
+
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            maxItemsInEachRow = 2
         ) {
-            FinanceMetric(
-                title = "Incoming",
-                amount = "KES 456k",
-                icon = Icons.Outlined.TrendingUp,
-                accent = primary,
-                modifier = Modifier.weight(1f)
-            )
-            FinanceMetric(
-                title = "Outgoing",
-                amount = "KES 172k",
-                icon = Icons.Outlined.TrendingDown,
-                accent = error,
-                modifier = Modifier.weight(1f)
-            )
+            FinanceMetric("Incoming", "KES 456k", Icons.Outlined.TrendingUp, primary)
+            FinanceMetric("Outgoing", "KES 172k", Icons.Outlined.TrendingDown, error)
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,21 +147,15 @@ private fun FinanceSnapshot() {
                 .background(primary.copy(alpha = 0.08f))
                 .padding(16.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Outstanding Balance", style = MaterialTheme.typography.bodyMedium, color = onSurface)
                 Text(
-                    text = "Outstanding Balance",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = onSurface
-                )
-                Text(
-                    text = "KES 96,300",
+                    "KES 96,300",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     color = onSurface
                 )
                 Text(
-                    text = "Keep an eye on pending invoices to maintain healthy cash flow.",
+                    "Keep an eye on pending invoices to maintain healthy cash flow.",
                     style = MaterialTheme.typography.bodySmall,
                     color = onSurface.copy(alpha = 0.7f)
                 )
@@ -187,11 +169,10 @@ private fun FinanceMetric(
     title: String,
     amount: String,
     icon: ImageVector,
-    accent: Color,
-    modifier: Modifier = Modifier
+    accent: Color
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
             .background(accent.copy(alpha = 0.08f))
             .padding(vertical = 16.dp, horizontal = 18.dp),
@@ -217,6 +198,7 @@ private fun FinanceMetric(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FinancesQuickActions() {
     val colorScheme = MaterialTheme.colorScheme
@@ -239,42 +221,29 @@ private fun FinancesQuickActions() {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = colorScheme.onBackground
         )
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            actions.chunked(3).forEach { chunk ->
-                val padded = chunk + List(3 - chunk.size) {
-                    FinanceQuickAction(title = "", icon = null, isPlaceholder = true)
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    padded.forEach { action ->
-                        FinanceActionTile(
-                            action = action,
-                            iconTint = accent,
-                            onClick = {}
-                        )
-                    }
-                }
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            maxItemsInEachRow = 3
+        ) {
+            actions.forEach { action ->
+                FinanceActionTile(action, accent)
             }
         }
     }
 }
 
 @Composable
-private fun RowScope.FinanceActionTile(
+private fun FinanceActionTile(
     action: FinanceQuickAction,
-    iconTint: Color,
-    onClick: (FinanceQuickAction) -> Unit
+    iconTint: Color
 ) {
-    val isPlaceholder = action.isPlaceholder
     Column(
         modifier = Modifier
-            .weight(1f)
             .clip(MaterialTheme.shapes.large)
-            .let { base ->
-                if (isPlaceholder) base.alpha(0f) else base.clickable { onClick(action) }
-            }
+            .clickable { }
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -285,31 +254,26 @@ private fun RowScope.FinanceActionTile(
                 .background(iconTint.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            action.icon?.let {
-                Icon(
-                    imageVector = it,
-                    contentDescription = if (isPlaceholder) null else action.title,
-                    tint = iconTint,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        if (!isPlaceholder) {
-            Text(
-                text = action.title,
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface
+            Icon(
+                imageVector = action.icon,
+                contentDescription = action.title,
+                tint = iconTint,
+                modifier = Modifier.size(28.dp)
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = action.title,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
 private data class FinanceQuickAction(
     val title: String,
-    val icon: ImageVector?,
-    val isPlaceholder: Boolean = false
+    val icon: ImageVector
 )
 
 @Preview(showBackground = true)
