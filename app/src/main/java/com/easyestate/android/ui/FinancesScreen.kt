@@ -3,11 +3,10 @@ package com.easyestate.android.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -180,7 +182,7 @@ private fun FinanceSnapshot() {
 }
 
 @Composable
-private fun FinanceMetric(
+private fun RowScope.FinanceMetric(
     title: String,
     amount: String,
     icon: ImageVector,
@@ -214,7 +216,7 @@ private fun FinanceMetric(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FinancesQuickActions() {
     val colorScheme = MaterialTheme.colorScheme
@@ -237,17 +239,17 @@ private fun FinancesQuickActions() {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = colorScheme.onBackground
         )
-        FlowRow(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3
+            userScrollEnabled = false
         ) {
-            actions.forEach { action ->
+            items(actions) { action ->
                 FinanceActionTile(
                     action = action,
-                    iconTint = accent,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    iconTint = accent
                 )
             }
         }
