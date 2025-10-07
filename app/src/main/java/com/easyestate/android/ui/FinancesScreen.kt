@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -239,19 +240,20 @@ private fun FinancesQuickActions() {
             color = colorScheme.onBackground
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            actions.chunked(3).forEach { rowActions ->
+            actions.chunked(3).forEach { chunk ->
+                val padded = chunk + List(3 - chunk.size) {
+                    FinanceQuickAction(title = "", icon = null, isPlaceholder = true)
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    rowActions.forEach { action ->
+                    padded.forEach { action ->
                         FinanceActionTile(
                             action = action,
-                            iconTint = accent
+                            iconTint = accent,
+                            onClick = {}
                         )
-                    }
-                    repeat(3 - rowActions.size) {
-                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -263,13 +265,16 @@ private fun FinancesQuickActions() {
 private fun RowScope.FinanceActionTile(
     action: FinanceQuickAction,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    onClick: (FinanceQuickAction) -> Unit
 ) {
+    val isPlaceholder = action.isPlaceholder
     Column(
-        modifier = modifier
+        modifier = Modifier
             .weight(1f)
             .clip(MaterialTheme.shapes.large)
-            .clickable { }
+            .let { base ->
+                if (isPlaceholder) base.alpha(0f) else base.clickable { onClick(action) }
+            }
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -280,26 +285,31 @@ private fun RowScope.FinanceActionTile(
                 .background(iconTint.copy(alpha = 0.1f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = action.icon,
-                contentDescription = action.title,
-                tint = iconTint,
-                modifier = Modifier.size(28.dp)
-            )
+            action.icon?.let {
+                Icon(
+                    imageVector = it,
+                    contentDescription = if (isPlaceholder) null else action.title,
+                    tint = iconTint,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = action.title,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        if (!isPlaceholder) {
+            Text(
+                text = action.title,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
 private data class FinanceQuickAction(
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector?,
+    val isPlaceholder: Boolean = false
 )
 
 @Preview(showBackground = true)

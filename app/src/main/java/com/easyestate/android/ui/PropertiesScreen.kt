@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -220,20 +221,19 @@ private fun QuickActionsSection(
             color = MaterialTheme.colorScheme.onBackground
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            actions.chunked(3).forEach { rowActions ->
+            actions.chunked(3).forEach { chunk ->
+                val padded = chunk + List(3 - chunk.size) {
+                    PropertyQuickAction(title = "", icon = null, route = null, accentColor = null, isPlaceholder = true)
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    rowActions.forEach { action ->
+                    padded.forEach { action ->
                         PropertyActionTile(
                             action = action,
-                            onClick = { action.route?.let(onNavigate) },
-                            modifier = Modifier.weight(1f)
+                            onClick = { action.route?.let(onNavigate) }
                         )
-                    }
-                    repeat(3 - rowActions.size) {
-                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -242,10 +242,9 @@ private fun QuickActionsSection(
 }
 
 @Composable
-private fun PropertyActionTile(
+private fun RowScope.PropertyActionTile(
     action: PropertyQuickAction,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     val isEnabled = action.route != null
     val colorScheme = MaterialTheme.colorScheme
@@ -255,9 +254,12 @@ private fun PropertyActionTile(
     val labelColor = colorScheme.onSurface
 
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .weight(1f)
             .clip(MaterialTheme.shapes.large)
-            .clickable(enabled = isEnabled, onClick = onClick)
+            .let { base ->
+                if (action.isPlaceholder) base.alpha(0f) else base.clickable(enabled = isEnabled, onClick = onClick)
+            }
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -268,28 +270,33 @@ private fun PropertyActionTile(
                 .background(color = iconBackground, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = action.icon,
-                contentDescription = action.title,
-                tint = iconTint,
-                modifier = Modifier.size(28.dp)
-            )
+            action.icon?.let {
+                Icon(
+                    imageVector = it,
+                    contentDescription = if (action.isPlaceholder) null else action.title,
+                    tint = iconTint,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = action.title,
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-            textAlign = TextAlign.Center,
-            color = labelColor
-        )
+        if (!action.isPlaceholder) {
+            Text(
+                text = action.title,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                textAlign = TextAlign.Center,
+                color = labelColor
+            )
+        }
     }
 }
 
 data class PropertyQuickAction(
     val title: String,
-    val icon: ImageVector,
+    val icon: ImageVector?,
     val route: String? = null,
-    val accentColor: Color? = null
+    val accentColor: Color? = null,
+    val isPlaceholder: Boolean = false
 )
 
 @Preview(showBackground = true)
