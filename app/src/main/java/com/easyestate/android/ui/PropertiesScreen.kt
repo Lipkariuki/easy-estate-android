@@ -111,13 +111,13 @@ fun PropertiesScreen(
 
 @Composable
 private fun StatsChart() {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             "Overview",
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             StatCard(
                 label = "Properties",
                 value = "12",
@@ -147,17 +147,17 @@ private fun StatCard(
         colors = CardDefaults.cardColors(containerColor = color)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 label,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
                 value,
-                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
@@ -181,7 +181,7 @@ private fun QuickActionsSection(
             title = "Add Unit",
             icon = Icons.Outlined.AddHome,
             route = AppDestination.AddUnit.route,
-            accentColor = StitchInfo
+            accentColor = colorScheme.primary
         ),
         PropertyQuickAction(
             title = "Edit Property",
@@ -250,7 +250,6 @@ private fun PropertyActionTile(
     val iconBackground = accent.copy(alpha = 0.1f)
     val iconTint = accent
     val labelColor = colorScheme.onSurface
-    val hintColor = colorScheme.onSurfaceVariant
 
     Column(
         modifier = modifier
@@ -280,14 +279,6 @@ private fun PropertyActionTile(
             textAlign = TextAlign.Center,
             color = labelColor
         )
-        if (!isEnabled) {
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "Coming soon",
-                style = MaterialTheme.typography.labelSmall,
-                color = hintColor
-            )
-        }
     }
 }
 
