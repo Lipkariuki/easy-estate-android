@@ -3,7 +3,6 @@ package com.easyestate.android.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -133,31 +132,24 @@ private fun FinanceSnapshot() {
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = onSurface
         )
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            userScrollEnabled = false
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
-                FinanceMetric(
-                    title = "Incoming",
-                    amount = "KES 456k",
-                    icon = Icons.Outlined.TrendingUp,
-                    accent = primary
-                )
-            }
-            item {
-                FinanceMetric(
-                    title = "Outgoing",
-                    amount = "KES 172k",
-                    icon = Icons.Outlined.TrendingDown,
-                    accent = error
-                )
-            }
+            FinanceMetric(
+                title = "Incoming",
+                amount = "KES 456k",
+                icon = Icons.Outlined.TrendingUp,
+                accent = primary,
+                modifier = Modifier.weight(1f)
+            )
+            FinanceMetric(
+                title = "Outgoing",
+                amount = "KES 172k",
+                icon = Icons.Outlined.TrendingDown,
+                accent = error,
+                modifier = Modifier.weight(1f)
+            )
         }
         Box(
             modifier = Modifier
@@ -194,10 +186,11 @@ private fun FinanceMetric(
     title: String,
     amount: String,
     icon: ImageVector,
-    accent: Color
+    accent: Color,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(20.dp))
             .background(accent.copy(alpha = 0.08f))
             .padding(vertical = 16.dp, horizontal = 18.dp),
@@ -223,7 +216,6 @@ private fun FinanceMetric(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FinancesQuickActions() {
     val colorScheme = MaterialTheme.colorScheme
@@ -246,31 +238,36 @@ private fun FinancesQuickActions() {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = colorScheme.onBackground
         )
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            userScrollEnabled = false
-        ) {
-            items(actions) { action ->
-                FinanceActionTile(
-                    action = action,
-                    iconTint = accent
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            actions.chunked(3).forEach { rowActions ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    rowActions.forEach { action ->
+                        FinanceActionTile(
+                            action = action,
+                            iconTint = accent
+                        )
+                    }
+                    repeat(3 - rowActions.size) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun FinanceActionTile(
+private fun RowScope.FinanceActionTile(
     action: FinanceQuickAction,
     iconTint: Color,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
+            .weight(1f)
             .clip(MaterialTheme.shapes.large)
             .clickable { }
             .padding(vertical = 8.dp),
