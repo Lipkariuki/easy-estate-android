@@ -1,5 +1,6 @@
 package com.easyestate.android.data
 
+import com.easyestate.android.BuildConfig
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -90,8 +91,7 @@ interface EasyEstateApiService {
 // --- Retrofit Client ---
 
 object ApiClient {
-    // Use 10.0.2.2 to connect to localhost from the Android emulator
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+    private const val DEFAULT_BASE_URL = "http://10.0.2.2:8000/"
 
     @Volatile
     private var authToken: String? = null
@@ -112,13 +112,25 @@ object ApiClient {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    val instance: EasyEstateApiService by lazy {
+    private fun resolveBaseUrl(): String {
+        val configured = BuildConfig.API_BASE_URL.trim()
+        val withSlash = if (configured.isNotEmpty() && !configured.endsWith("/")) {
+            "$configured/"
+        } else {
+            configured
+        }
+        return withSlash.ifEmpty { DEFAULT_BASE_URL }
+    }
+
+    private fun createRetrofit(baseUrl: String): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(EasyEstateApiService::class.java)
+
+    val instance: EasyEstateApiService by lazy {
+        createRetrofit(resolveBaseUrl()).create(EasyEstateApiService::class.java)
     }
 
     fun updateAuthToken(token: String?) {

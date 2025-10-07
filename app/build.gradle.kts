@@ -18,6 +18,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val rawBaseUrl = (project.findProperty("API_BASE_URL") as? String)?.trim().orEmpty()
+        val resolvedBaseUrl = rawBaseUrl.ifBlank { "http://10.0.2.2:8000/" }
+        val normalisedBaseUrl = if (resolvedBaseUrl.endsWith("/")) resolvedBaseUrl else "$resolvedBaseUrl/"
+        buildConfigField("String", "API_BASE_URL", "\"${normalisedBaseUrl.replace("\"", "\\\"")}\"")
     }
 
     buildTypes {
