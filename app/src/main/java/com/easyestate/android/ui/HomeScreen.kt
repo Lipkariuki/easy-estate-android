@@ -384,6 +384,11 @@ private val DashboardQuickActions = listOf(
     QuickAction("Add Tenant", Icons.Outlined.GroupAdd)
 )
 
+private data class QuickAction(
+    val title: String,
+    val icon: ImageVector
+)
+
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
