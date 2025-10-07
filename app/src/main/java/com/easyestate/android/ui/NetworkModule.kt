@@ -1,6 +1,5 @@
 package com.easyestate.android.data
 
-import com.easyestate.android.BuildConfig
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -118,16 +117,6 @@ object ApiClient {
         .addInterceptor(loggingInterceptor)
         .build()
 
-    private fun resolveBaseUrl(): String {
-        val configured = BuildConfig.API_BASE_URL.trim()
-        val withSlash = if (configured.isNotEmpty() && !configured.endsWith("/")) {
-            "$configured/"
-        } else {
-            configured
-        }
-        return withSlash.ifEmpty { DEFAULT_BASE_URL }
-    }
-
     private fun createRetrofit(baseUrl: String): Retrofit =
         Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -136,7 +125,7 @@ object ApiClient {
             .build()
 
     val instance: EasyEstateApiService by lazy {
-        createRetrofit(resolveBaseUrl()).create(EasyEstateApiService::class.java)
+        createRetrofit(DEFAULT_BASE_URL).create(EasyEstateApiService::class.java)
     }
 
     fun updateAuthToken(token: String?) {
