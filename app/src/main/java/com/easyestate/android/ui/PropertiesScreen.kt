@@ -168,10 +168,10 @@ private fun QuickActionsSection(
     onNavigate: (String) -> Unit
 ) {
     val actions = listOf(
-        QuickAction("Add Property", Icons.Outlined.AddBusiness),
-        QuickAction("Add Unit", Icons.Outlined.AddHome),
-        QuickAction("Units", Icons.Outlined.Apartment),
-        QuickAction("Meter", Icons.Outlined.Speed)
+        PropertyQuickAction("Add Property", Icons.Outlined.AddBusiness),
+        PropertyQuickAction("Add Unit", Icons.Outlined.AddHome),
+        PropertyQuickAction("Units", Icons.Outlined.Apartment),
+        PropertyQuickAction("Meter", Icons.Outlined.Speed)
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -204,7 +204,7 @@ private fun QuickActionsSection(
 
 @Composable
 private fun PropertyActionTile(
-    action: QuickAction,
+    action: PropertyQuickAction,
     onClick: () -> Unit
 ) {
     Column(
@@ -232,7 +232,7 @@ private fun PropertyActionTile(
     }
 }
 
-data class QuickAction(
+private data class PropertyQuickAction(
     val title: String,
     val icon: ImageVector
 )
