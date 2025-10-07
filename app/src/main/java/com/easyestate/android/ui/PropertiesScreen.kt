@@ -26,7 +26,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -167,11 +169,48 @@ private fun StatCard(
 private fun QuickActionsSection(
     onNavigate: (String) -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val actions = listOf(
-        QuickAction("Add Property", Icons.Outlined.AddBusiness),
-        QuickAction("Add Unit", Icons.Outlined.AddHome),
-        QuickAction("Units", Icons.Outlined.Apartment),
-        QuickAction("Meter", Icons.Outlined.Speed)
+        PropertyQuickAction(
+            title = "Add Property",
+            icon = Icons.Outlined.AddBusiness,
+            route = AppDestination.AddProperty.route,
+            gradient = Brush.linearGradient(listOf(colorScheme.primary, colorScheme.primary.copy(alpha = 0.65f)))
+        ),
+        PropertyQuickAction(
+            title = "Add Unit",
+            icon = Icons.Outlined.AddHome,
+            route = AppDestination.AddUnit.route,
+            gradient = Brush.linearGradient(listOf(StitchInfo, colorScheme.primary.copy(alpha = 0.5f)))
+        ),
+        PropertyQuickAction(
+            title = "Edit Property",
+            icon = Icons.Outlined.EditNote
+        ),
+        PropertyQuickAction(
+            title = "View Units",
+            icon = Icons.Outlined.Apartment
+        ),
+        PropertyQuickAction(
+            title = "Rent Overview",
+            icon = Icons.Outlined.AttachMoney
+        ),
+        PropertyQuickAction(
+            title = "Meters",
+            icon = Icons.Outlined.Speed
+        ),
+        PropertyQuickAction(
+            title = "Tenants",
+            icon = Icons.Outlined.Groups
+        ),
+        PropertyQuickAction(
+            title = "Maintenance",
+            icon = Icons.Outlined.Construction
+        ),
+        PropertyQuickAction(
+            title = "Vacant / Occupied",
+            icon = Icons.Outlined.HomeWork
+        )
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -184,17 +223,13 @@ private fun QuickActionsSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2
+            maxItemsInEachRow = 3
         ) {
             actions.forEach { action ->
                 PropertyActionTile(
-                    action = action, onClick = {
-                        when (action.title) {
-                            "Add Property" -> onNavigate(AppDestination.AddProperty.route)
-                            "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
-                            else -> { /* TODO: Handle other actions */ }
-                        }
-                    },
+                    action = action,
+                    enabled = action.route != null,
+                    onClick = { action.route?.let(onNavigate) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -204,38 +239,58 @@ private fun QuickActionsSection(
 
 @Composable
 private fun PropertyActionTile(
-    action: QuickAction,
+    action: PropertyQuickAction,
+    enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val gradient = action.gradient ?: Brush.linearGradient(
+        listOf(
+            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f),
+            MaterialTheme.colorScheme.surfaceVariant
+        )
+    )
+
     Column(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
-            .padding(16.dp),
+            .clip(RoundedCornerShape(20.dp))
+            .background(gradient)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(18.dp)
+            .alpha(if (enabled) 1f else 0.55f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
             imageVector = action.icon,
             contentDescription = action.title,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(36.dp)
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(32.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = action.title,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
         )
+        if (!enabled) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Coming soon",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
-data class QuickAction(
+data class PropertyQuickAction(
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val route: String? = null,
+    val gradient: Brush? = null
 )
 
 @Preview(showBackground = true)
