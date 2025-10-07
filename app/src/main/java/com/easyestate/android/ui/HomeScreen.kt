@@ -305,32 +305,25 @@ private fun QuickActionsGrid(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            actions.chunked(3).forEach { rowActions ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    rowActions.forEach { action ->
-                        Box(modifier = Modifier.weight(1f)) {
-                            QuickActionTile(
-                                action = action,
-                                onClick = {
-                                    when (action.title) {
-                                        "Add Tenant" -> onAddTenantClick()
-                                        "Properties" -> onNavigate(AppDestination.Properties.route)
-                                        "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
-                                        else -> {}
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            maxItemsInEachRow = 3
+        ) {
+            actions.forEach { action ->
+                QuickActionTile(
+                    action = action,
+                    onClick = {
+                        when (action.title) {
+                            "Add Tenant" -> onAddTenantClick()
+                            "Properties" -> onNavigate(AppDestination.Properties.route)
+                            "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
+                            else -> {}
                         }
-                    }
-                    repeat(3 - rowActions.size) {
-                        Box(modifier = Modifier.weight(1f)) {}
-                    }
-                }
+                    },
+                    modifier = Modifier.width(110.dp)
+                )
             }
         }
     }
@@ -422,3 +415,4 @@ private fun HomeScreenPreviewWithNotifications() {
         )
     }
 }
+import androidx.compose.foundation.layout.width
