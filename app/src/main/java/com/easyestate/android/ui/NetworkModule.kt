@@ -3,6 +3,7 @@ package com.easyestate.android.data
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -44,10 +45,10 @@ interface EasyEstateApiService {
     suspend fun signIn(
         @Field("username") email: String,
         @Field("password") password: String
-    ): Token
+    ): Response<Token>
 
     @POST("users/")
-    suspend fun register(@Body request: AuthRequest): User
+    suspend fun register(@Body request: AuthRequest): Response<User>
 
     @GET("users/me")
     suspend fun getCurrentUser(@Header("Authorization") token: String): User
