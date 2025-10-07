@@ -8,15 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -136,22 +133,31 @@ private fun FinanceSnapshot() {
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = onSurface
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            userScrollEnabled = false
         ) {
-            FinanceMetric(
-                title = "Incoming",
-                amount = "KES 456k",
-                icon = Icons.Outlined.TrendingUp,
-                accent = primary
-            )
-            FinanceMetric(
-                title = "Outgoing",
-                amount = "KES 172k",
-                icon = Icons.Outlined.TrendingDown,
-                accent = error
-            )
+            item {
+                FinanceMetric(
+                    title = "Incoming",
+                    amount = "KES 456k",
+                    icon = Icons.Outlined.TrendingUp,
+                    accent = primary
+                )
+            }
+            item {
+                FinanceMetric(
+                    title = "Outgoing",
+                    amount = "KES 172k",
+                    icon = Icons.Outlined.TrendingDown,
+                    accent = error
+                )
+            }
         }
         Box(
             modifier = Modifier
@@ -184,7 +190,7 @@ private fun FinanceSnapshot() {
 }
 
 @Composable
-private fun RowScope.FinanceMetric(
+private fun FinanceMetric(
     title: String,
     amount: String,
     icon: ImageVector,
@@ -192,7 +198,6 @@ private fun RowScope.FinanceMetric(
 ) {
     Column(
         modifier = Modifier
-            .weight(1f)
             .clip(RoundedCornerShape(20.dp))
             .background(accent.copy(alpha = 0.08f))
             .padding(vertical = 16.dp, horizontal = 18.dp),
