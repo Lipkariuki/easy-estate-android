@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.*
@@ -28,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -175,13 +175,13 @@ private fun QuickActionsSection(
             title = "Add Property",
             icon = Icons.Outlined.AddBusiness,
             route = AppDestination.AddProperty.route,
-            gradient = Brush.linearGradient(listOf(colorScheme.primary, colorScheme.primary.copy(alpha = 0.65f)))
+            accentColor = colorScheme.primary
         ),
         PropertyQuickAction(
             title = "Add Unit",
             icon = Icons.Outlined.AddHome,
             route = AppDestination.AddUnit.route,
-            gradient = Brush.linearGradient(listOf(StitchInfo, colorScheme.primary.copy(alpha = 0.5f)))
+            accentColor = StitchInfo
         ),
         PropertyQuickAction(
             title = "Edit Property",
@@ -221,16 +221,17 @@ private fun QuickActionsSection(
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             maxItemsInEachRow = 3
         ) {
             actions.forEach { action ->
                 PropertyActionTile(
                     action = action,
-                    enabled = action.route != null,
                     onClick = { action.route?.let(onNavigate) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 4.dp)
                 )
             }
         }
@@ -240,47 +241,51 @@ private fun QuickActionsSection(
 @Composable
 private fun PropertyActionTile(
     action: PropertyQuickAction,
-    enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val gradient = action.gradient ?: Brush.linearGradient(
-        listOf(
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f),
-            MaterialTheme.colorScheme.surfaceVariant
-        )
-    )
+    val isEnabled = action.route != null
+    val colorScheme = MaterialTheme.colorScheme
+    val accent = action.accentColor ?: colorScheme.primary
+    val iconBackground = accent.copy(alpha = 0.1f)
+    val iconTint = accent
+    val labelColor = colorScheme.onSurface
+    val hintColor = colorScheme.onSurfaceVariant
 
     Column(
         modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(20.dp))
-            .background(gradient)
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(18.dp)
-            .alpha(if (enabled) 1f else 0.55f),
+            .clip(MaterialTheme.shapes.large)
+            .clickable(enabled = isEnabled, onClick = onClick)
+            .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            imageVector = action.icon,
-            contentDescription = action.title,
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(32.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .background(color = iconBackground, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = action.icon,
+                contentDescription = action.title,
+                tint = iconTint,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = action.title,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = labelColor
         )
-        if (!enabled) {
+        if (!isEnabled) {
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = "Coming soon",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = hintColor
             )
         }
     }
@@ -290,7 +295,7 @@ data class PropertyQuickAction(
     val title: String,
     val icon: ImageVector,
     val route: String? = null,
-    val gradient: Brush? = null
+    val accentColor: Color? = null
 )
 
 @Preview(showBackground = true)
