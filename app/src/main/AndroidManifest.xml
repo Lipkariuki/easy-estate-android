@@ -9,7 +9,7 @@
         android:roundIcon="@android:drawable/ic_menu_compass"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EasyEstateAndroid">
+        android:theme="@style/Theme.EasyEstateAndroid"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
