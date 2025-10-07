@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.outlined.TrendingDown
 import androidx.compose.material.icons.outlined.TrendingUp
 import androidx.compose.material.icons.outlined.Wallet
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import com.easyestate.android.R
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinancesScreen(
     onBack: () -> Unit,
@@ -211,6 +214,7 @@ private fun FinanceMetric(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FinancesQuickActions() {
     val colorScheme = MaterialTheme.colorScheme
@@ -301,3 +305,4 @@ private fun FinancesScreenPreview() {
         FinancesScreen(onBack = {})
     }
 }
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
