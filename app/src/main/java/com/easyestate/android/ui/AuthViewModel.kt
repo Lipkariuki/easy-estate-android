@@ -27,41 +27,57 @@ class AuthViewModel : ViewModel() {
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             setLoading(true)
-            delay(500) // Simulate network latency
             if (email.isBlank() || password.isBlank()) {
                 emitMessage("Enter both email and password")
                 return@launch
             }
 
-            val lastCreated = _uiState.value.lastCreatedAccount
-            val matchedAccount = when {
-                email == adminAccount.email && password == adminAccount.password -> adminAccount
-                lastCreated != null && email == lastCreated.email && password == lastCreated.password -> lastCreated
-                else -> null
-            }
-
-            if (matchedAccount != null) {
-                emitNavigateHome(matchedAccount)
-            } else {
-                emitMessage("Invalid credentials. Try admin@easyestate.com / Admin123!")
+            // TODO: Replace this with your actual API call
+            try {
+                val response = ApiClient.instance.signIn(email = email, password = password)
+                if (response.isSuccessful && response.body() != null) {
+                    // For now, we'll use the email as the name. We can fetch the full user profile later.
+                    val account = AdminAccount(name = email, email = email, password = "")
+                    emitNavigateHome(account)
+                } else {
+                    // Handle unsuccessful login (e.g., wrong password)
+                    emitMessage("Invalid credentials. Please try again.")
+                }
+            } catch (e: Exception) {
+                // Handle network errors or other exceptions
+                Log.e("AuthViewModel", "Sign-in failed", e)
+                emitMessage("An error occurred. Please check your connection.")
             }
         }
     }
 
-    fun signUp(name: String, email: String, password: String) {
+    fun signUp(
+        firstName: String,
+        lastName: String,
+        email: String,
+        phone: String,
+        userRole: String,
+        password: String
+    ) {
         viewModelScope.launch {
             setLoading(true)
-            delay(500) // Simulate network latency
             when {
-                name.isBlank() -> emitMessage("Add your full name")
+                firstName.isBlank() || lastName.isBlank() -> emitMessage("First and last name are required")
                 email.isBlank() -> emitMessage("Email is required")
                 password.length < 6 -> emitMessage("Password must be at least 6 characters")
                 else -> {
-                    val newAccount = AdminAccount(name, email, password)
-                    _uiState.update { it.copy(isLoading = false, lastCreatedAccount = newAccount) }
-                    // Use a separate event for navigation after sign-up
-                    val message = "Account created for $name. You can now log in."
-                    emitMessage(message, navigateBackToLogin = true)
+                    try {
+                        val request = AuthRequest(email, password, firstName, lastName, phone, userRole)
+                        val response = ApiClient.instance.register(request)
+                        if (response.isSuccessful) {
+                            val message = "Account created for $firstName. You can now log in."
+                            emitMessage(message, navigateBackToLogin = true)
+                        } else {
+                            emitMessage("Sign-up failed: ${response.message()}")
+                        }
+                    } catch (e: Exception) {
+                        emitMessage("An error occurred during sign-up.")
+                    }
                 }
             }
         }
@@ -109,7 +125,11 @@ data class AuthUiState(
 )
 
 sealed interface AuthUiEvent {
-    data class Message(val message: String, val navigateBackToLogin: Boolean = false) : AuthUiEvent
+    data class Message(
+        val message: String,
+        val navigateBackToLogin: Boolean = false
+    ) : AuthUiEvent
+
     data class NavigateHome(val adminName: String) : AuthUiEvent
     data object NavigateToLanding : AuthUiEvent
 }

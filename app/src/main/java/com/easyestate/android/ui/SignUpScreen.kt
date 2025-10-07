@@ -48,7 +48,15 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    onSignUp: (name: String, email: String, password: String) -> Unit, onBack: () -> Unit,
+    onSignUp: (
+        firstName: String,
+        lastName: String,
+        email: String,
+        phone: String,
+        userRole: String,
+        password: String
+    ) -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false
 ) {
@@ -105,7 +113,7 @@ fun SignUpScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = { onSignUp("$firstName $lastName", email, password) },
+                    onClick = { onSignUp(firstName, lastName, email, phone, userRole, password) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -204,7 +212,7 @@ fun SignUpScreen(
 @Composable
 private fun SignUpScreenPreview() {
     EasyEstateTheme {
-        SignUpScreen(onSignUp = { _, _, _ -> }, onBack = {})
+        SignUpScreen(onSignUp = { _, _, _, _, _, _ -> }, onBack = {})
     }
 }
 
@@ -212,6 +220,6 @@ private fun SignUpScreenPreview() {
 @Composable
 private fun SignUpScreenLoadingPreview() {
     EasyEstateTheme {
-        SignUpScreen(onSignUp = { _, _, _ -> }, onBack = {}, isLoading = true)
+        SignUpScreen(onSignUp = { _, _, _, _, _, _ -> }, onBack = {}, isLoading = true)
     }
 }

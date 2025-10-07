@@ -15,9 +15,12 @@ import retrofit2.http.POST
 // --- Data Transfer Objects (DTOs) ---
 
 data class AuthRequest(
-    val name: String? = null,
     val email: String,
-    val password: String
+    val password: String,
+    @SerializedName("first_name") val firstName: String,
+    @SerializedName("last_name") val lastName: String,
+    @SerializedName("phone_number") val phoneNumber: String,
+    @SerializedName("user_role") val userRole: String
 )
 
 data class Token(
@@ -28,7 +31,9 @@ data class Token(
 data class User(
     val id: Int,
     val email: String,
-    @SerializedName("is_active") val isActive: Boolean
+    @SerializedName("is_active") val isActive: Boolean,
+    @SerializedName("first_name") val firstName: String?,
+    @SerializedName("last_name") val lastName: String?
 )
 
 // --- Retrofit API Service ---
@@ -36,7 +41,7 @@ data class User(
 interface EasyEstateApiService {
     @FormUrlEncoded
     @POST("login")
-    suspend fun login(
+    suspend fun signIn(
         @Field("username") email: String,
         @Field("password") password: String
     ): Token

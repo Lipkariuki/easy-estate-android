@@ -131,8 +131,8 @@ fun EasyEstateApp(
             }
             composable(AppDestination.SignUp.route) {
                 SignUpScreen(
-                    onSignUp = { name, email, password ->
-                        authViewModel.signUp(name, email, password)
+                    onSignUp = { firstName, lastName, email, phone, userRole, password ->
+                        authViewModel.signUp(firstName, lastName, email, phone, userRole, password)
                     },
                     onBack = { navController.popBackStack() },
                     isLoading = uiState.isLoading
