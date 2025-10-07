@@ -41,13 +41,13 @@ data class User(
 
 interface EasyEstateApiService {
     @FormUrlEncoded
-    @POST("login")
+    @POST("login/access-token")
     suspend fun signIn(
         @Field("username") email: String,
         @Field("password") password: String
     ): Response<Token>
 
-    @POST("users/")
+    @POST("users")
     suspend fun register(@Body request: AuthRequest): Response<User>
 
     @GET("users/me")
@@ -58,7 +58,7 @@ interface EasyEstateApiService {
 
 object ApiClient {
     // Use 10.0.2.2 to connect to localhost from the Android emulator
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+    private const val BASE_URL = "http://10.0.2.2:8000/api/v1/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
