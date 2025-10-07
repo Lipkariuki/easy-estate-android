@@ -7,58 +7,59 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 
 // --- Data Transfer Objects (DTOs) ---
 
-data class AuthRequest(
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+data class SignupRequest(
     val email: String,
     val password: String,
-    @SerializedName("first_name") val firstName: String,
-    @SerializedName("last_name") val lastName: String,
-    @SerializedName("phone_number") val phoneNumber: String,
-    @SerializedName("user_role") val userRole: String
+    val role: String
 )
 
-data class Token(
+data class TokenResponse(
     @SerializedName("access_token") val accessToken: String,
-    @SerializedName("token_type") val tokenType: String
+    @SerializedName("token_type") val tokenType: String,
+    val user: UserInfo
 )
 
-data class User(
+data class UserInfo(
     val id: Int,
     val email: String,
-    @SerializedName("is_active") val isActive: Boolean,
-    @SerializedName("first_name") val firstName: String?,
-    @SerializedName("last_name") val lastName: String?
+    val role: String,
+    val active: Boolean
+)
+
+data class SignupResponse(
+    @SerializedName("user_id") val userId: Int,
+    val email: String,
+    val role: String,
+    val active: Boolean,
+    @SerializedName("verification_sent") val verificationSent: Boolean,
+    @SerializedName("verification_expires_at") val verificationExpiresAt: String,
+    @SerializedName("debug_token") val debugToken: String?
 )
 
 // --- Retrofit API Service ---
 
 interface EasyEstateApiService {
-    @FormUrlEncoded
-    @POST("login/access-token")
-    suspend fun signIn(
-        @Field("username") email: String,
-        @Field("password") password: String
-    ): Response<Token>
+    @POST("auth/login")
+    suspend fun signIn(@Body request: LoginRequest): Response<TokenResponse>
 
-    @POST("users")
-    suspend fun register(@Body request: AuthRequest): Response<User>
-
-    @GET("users/me")
-    suspend fun getCurrentUser(@Header("Authorization") token: String): User
+    @POST("auth/signup")
+    suspend fun register(@Body request: SignupRequest): Response<SignupResponse>
 }
 
 // --- Retrofit Client ---
 
 object ApiClient {
     // Use 10.0.2.2 to connect to localhost from the Android emulator
-    private const val BASE_URL = "http://10.0.2.2:8000/api/v1/"
+    private const val BASE_URL = "http://10.0.2.2:8000/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

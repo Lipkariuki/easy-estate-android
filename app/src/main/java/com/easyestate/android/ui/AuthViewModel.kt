@@ -3,14 +3,14 @@ package com.easyestate.android.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.easyestate.android.data.ApiClient
-import com.easyestate.android.data.AuthRequest
+import com.easyestate.android.data.LoginRequest
+import com.easyestate.android.data.SignupRequest
 
 class AuthViewModel : ViewModel() {
 
@@ -32,17 +32,33 @@ class AuthViewModel : ViewModel() {
                 return@launch
             }
 
-            // TODO: Replace this with your actual API call
+            val trimmedEmail = email.trim()
             try {
-                val response = ApiClient.instance.signIn(email = email, password = password)
-                if (response.isSuccessful && response.body() != null) {
-                    // For now, we'll use the email as the name. We can fetch the full user profile later.
-                    val account = AdminAccount(name = email, email = email, password = "")
+                val response = ApiClient.instance.signIn(LoginRequest(email = trimmedEmail, password = password))
+                if (response.isSuccessful) {
+                    val tokenResponse = response.body()
+                    if (tokenResponse == null) {
+                        emitMessage("Login failed. Please try again.")
+                        return@launch
+                    }
+
+                    if (!tokenResponse.user.active) {
+                        emitMessage("Please verify your email before logging in.")
+                        return@launch
+                    }
+
+                    val account = AdminAccount(name = tokenResponse.user.email, email = tokenResponse.user.email, password = "")
                     emitNavigateHome(account)
-                } else {
-                    // Handle unsuccessful login (e.g., wrong password)
-                    emitMessage("Invalid credentials. Please try again.")
+                    return@launch
                 }
+
+                val message = when (response.code()) {
+                    401 -> "Invalid credentials. Please try again."
+                    403 -> "Please verify your email before logging in."
+                    404 -> "Login service unavailable. Please try again later."
+                    else -> "Login failed: ${response.message()}"
+                }
+                emitMessage(message)
             } catch (e: Exception) {
                 // Handle network errors or other exceptions
                 Log.e("AuthViewModel", "Sign-in failed", e)
@@ -67,13 +83,29 @@ class AuthViewModel : ViewModel() {
                 password.length < 6 -> emitMessage("Password must be at least 6 characters")
                 else -> {
                     try {
-                        val request = AuthRequest(email, password, firstName, lastName, phone, userRole)
+                        val request = SignupRequest(
+                            email = email.trim(),
+                            password = password,
+                            role = mapUserRoleForApi(userRole)
+                        )
                         val response = ApiClient.instance.register(request)
                         if (response.isSuccessful) {
-                            val message = "Account created for $firstName. You can now log in."
+                            val body = response.body()
+                            val message = if (body?.verificationSent == true) {
+                                "Account created for $firstName. Check your email to verify your account."
+                            } else {
+                                "Account created for $firstName. You can now log in."
+                            }
                             emitMessage(message, navigateBackToLogin = true)
                         } else {
-                            emitMessage("Sign-up failed: ${response.message()}")
+                            val message = when (response.code()) {
+                                400 -> "Sign-up failed: Invalid details provided."
+                                401 -> "Sign-up failed: Unauthorized request."
+                                403 -> "Sign-up failed: Action not allowed."
+                                409 -> "An account with this email already exists."
+                                else -> "Sign-up failed: ${response.message()}"
+                            }
+                            emitMessage(message)
                         }
                     } catch (e: Exception) {
                         emitMessage("An error occurred during sign-up.")
@@ -113,6 +145,15 @@ class AuthViewModel : ViewModel() {
                 currentAdminName = account.name,
                 event = AuthUiEvent.NavigateHome(account.name)
             )
+        }
+    }
+
+    private fun mapUserRoleForApi(userRole: String): String {
+        val normalized = userRole.trim().lowercase()
+        return when (normalized) {
+            "owner/agent", "owner", "agent" -> "owner"
+            "tenant", "manager" -> "manager"
+            else -> "owner"
         }
     }
 }
