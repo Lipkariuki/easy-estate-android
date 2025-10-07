@@ -45,6 +45,35 @@ data class SignupResponse(
     @SerializedName("debug_token") val debugToken: String?
 )
 
+data class TenantCreateRequest(
+    @SerializedName("full_name") val fullName: String,
+    val email: String?,
+    val phone: String?,
+    @SerializedName("id_number") val idNumber: String?,
+    @SerializedName("date_of_birth") val dateOfBirth: String?,
+    val gender: String?,
+    val occupation: String?,
+    @SerializedName("emergency_contact_name") val emergencyContactName: String?,
+    @SerializedName("emergency_contact_phone") val emergencyContactPhone: String?,
+    val notes: String?
+)
+
+data class TenantResponse(
+    val id: Int,
+    @SerializedName("full_name") val fullName: String,
+    val email: String?,
+    val phone: String?,
+    @SerializedName("id_number") val idNumber: String?,
+    @SerializedName("date_of_birth") val dateOfBirth: String?,
+    val gender: String?,
+    val occupation: String?,
+    @SerializedName("kyc_status") val kycStatus: String,
+    @SerializedName("kyc_score") val kycScore: Int,
+    @SerializedName("kyc_override") val kycOverride: Boolean,
+    @SerializedName("pending_documents") val pendingDocuments: Int,
+    @SerializedName("created_at") val createdAt: String
+)
+
 // --- Retrofit API Service ---
 
 interface EasyEstateApiService {
@@ -53,6 +82,9 @@ interface EasyEstateApiService {
 
     @POST("auth/signup")
     suspend fun register(@Body request: SignupRequest): Response<SignupResponse>
+
+    @POST("tenants/")
+    suspend fun createTenant(@Body request: TenantCreateRequest): Response<TenantResponse>
 }
 
 // --- Retrofit Client ---
@@ -61,11 +93,22 @@ object ApiClient {
     // Use 10.0.2.2 to connect to localhost from the Android emulator
     private const val BASE_URL = "http://10.0.2.2:8000/"
 
+    @Volatile
+    private var authToken: String? = null
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val builder = chain.request().newBuilder()
+            val token = authToken
+            if (!token.isNullOrBlank()) {
+                builder.addHeader("Authorization", "Bearer $token")
+            }
+            chain.proceed(builder.build())
+        }
         .addInterceptor(loggingInterceptor)
         .build()
 
@@ -76,5 +119,9 @@ object ApiClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(EasyEstateApiService::class.java)
+    }
+
+    fun updateAuthToken(token: String?) {
+        authToken = token
     }
 }

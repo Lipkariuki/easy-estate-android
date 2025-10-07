@@ -11,15 +11,11 @@ import kotlinx.coroutines.launch
 import com.easyestate.android.data.ApiClient
 import com.easyestate.android.data.LoginRequest
 import com.easyestate.android.data.SignupRequest
+import com.easyestate.android.data.TenantCreateRequest
 
 class AuthViewModel : ViewModel() {
 
-    // Re-introducing the hardcoded admin account for testing
-    private val adminAccount = AdminAccount(
-        name = "Easy Estate Admin",
-        email = "admin@easyestate.com",
-        password = "Admin123!"
-    )
+    private val dobRegex = Regex("""^\d{4}-\d{2}-\d{2}$""")
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -47,8 +43,15 @@ class AuthViewModel : ViewModel() {
                         return@launch
                     }
 
-                    val account = AdminAccount(name = tokenResponse.user.email, email = tokenResponse.user.email, password = "")
-                    emitNavigateHome(account)
+                    ApiClient.updateAuthToken(tokenResponse.accessToken)
+                    _uiState.update {
+                        it.copy(
+                            authToken = tokenResponse.accessToken,
+                            currentUserRole = tokenResponse.user.role
+                        )
+                    }
+
+                    emitNavigateHome(tokenResponse.user.email)
                     return@launch
                 }
 
@@ -115,9 +118,88 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun addTenant(
+        fullName: String,
+        phone: String,
+        email: String,
+        dob: String,
+        gender: String,
+        occupation: String
+    ) {
+        viewModelScope.launch {
+            setLoading(true)
+            val trimmedName = fullName.trim()
+            val trimmedPhone = phone.trim()
+            val trimmedEmail = email.trim()
+            val trimmedDob = dob.trim()
+            val trimmedOccupation = occupation.trim()
+            val token = _uiState.value.authToken
+            when {
+                trimmedName.isBlank() -> {
+                    emitMessage("Full name is required")
+                    return@launch
+                }
+                token.isNullOrBlank() -> {
+                    emitMessage("Session expired. Please sign in again.")
+                    return@launch
+                }
+                trimmedDob.isNotEmpty() && !dobRegex.matches(trimmedDob) -> {
+                    emitMessage("Date of birth must be in format YYYY-MM-DD.")
+                    return@launch
+                }
+                else -> {
+                    try {
+                        val request = TenantCreateRequest(
+                            fullName = trimmedName,
+                            email = trimmedEmail.takeIf { it.isNotEmpty() },
+                            phone = trimmedPhone.takeIf { it.isNotEmpty() },
+                            idNumber = null,
+                            dateOfBirth = trimmedDob.takeIf { it.isNotEmpty() },
+                            gender = mapGenderForApi(gender),
+                            occupation = trimmedOccupation.takeIf { it.isNotEmpty() },
+                            emergencyContactName = null,
+                            emergencyContactPhone = null,
+                            notes = null
+                        )
+                        val response = ApiClient.instance.createTenant(request)
+                        if (response.isSuccessful) {
+                            val created = response.body()
+                            val tenantName = created?.fullName ?: trimmedName
+                            emitTenantAdded("Tenant $tenantName added successfully.")
+                        } else {
+                            if (response.code() == 401) {
+                                ApiClient.updateAuthToken(null)
+                                _uiState.update { it.copy(authToken = null, currentUserRole = null) }
+                            }
+                            val message = when (response.code()) {
+                                400 -> "Failed to add tenant: Invalid details provided."
+                                401 -> "You are not authorized. Please sign in again."
+                                403 -> "Your account is not permitted to add tenants."
+                                else -> "Failed to add tenant: ${response.message()}"
+                            }
+                            emitMessage(message)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("AuthViewModel", "Add tenant failed", e)
+                        emitMessage("An error occurred while adding tenant.")
+                    }
+                }
+            }
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
-            _uiState.update { it.copy(event = AuthUiEvent.NavigateToLanding) }
+            ApiClient.updateAuthToken(null)
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    event = AuthUiEvent.NavigateToLanding,
+                    currentAdminName = null,
+                    currentUserRole = null,
+                    authToken = null
+                )
+            }
         }
     }
 
@@ -138,12 +220,12 @@ class AuthViewModel : ViewModel() {
         _uiState.update { it.copy(isLoading = isLoading) }
     }
 
-    private fun emitNavigateHome(account: AdminAccount) {
+    private fun emitNavigateHome(adminName: String) {
         _uiState.update {
             it.copy(
                 isLoading = false,
-                currentAdminName = account.name,
-                event = AuthUiEvent.NavigateHome(account.name)
+                currentAdminName = adminName,
+                event = AuthUiEvent.NavigateHome(adminName)
             )
         }
     }
@@ -156,13 +238,35 @@ class AuthViewModel : ViewModel() {
             else -> "owner"
         }
     }
+
+    private fun mapGenderForApi(gender: String): String? {
+        val normalized = gender.trim().lowercase()
+        return when {
+            normalized.isBlank() -> null
+            normalized == "male" -> "male"
+            normalized == "female" -> "female"
+            normalized == "other" -> "other"
+            normalized == "prefer not to say" -> "unspecified"
+            else -> null
+        }
+    }
+
+    private fun emitTenantAdded(message: String) {
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                event = AuthUiEvent.TenantAdded(message)
+            )
+        }
+    }
 }
 
 data class AuthUiState(
     val isLoading: Boolean = false,
     val event: AuthUiEvent? = null,
-    val currentAdminName: String? = "Easy Estate Admin",
-    val lastCreatedAccount: AdminAccount? = null
+    val currentAdminName: String? = null,
+    val currentUserRole: String? = null,
+    val authToken: String? = null
 )
 
 sealed interface AuthUiEvent {
@@ -173,10 +277,5 @@ sealed interface AuthUiEvent {
 
     data class NavigateHome(val adminName: String) : AuthUiEvent
     data object NavigateToLanding : AuthUiEvent
+    data class TenantAdded(val message: String) : AuthUiEvent
 }
-
-data class AdminAccount(
-    val name: String,
-    val email: String,
-    val password: String
-)

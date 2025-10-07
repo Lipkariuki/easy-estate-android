@@ -41,6 +41,7 @@ fun AddTenantScreen(
         gender: String,
         occupation: String
     ) -> Unit,
+    isSubmitting: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var fullName by rememberSaveable { mutableStateOf("") }
@@ -75,13 +76,26 @@ fun AddTenantScreen(
             ) {
                 Button(
                     onClick = { onSubmit(fullName, phone, email, dob, gender, occupation) },
+                    enabled = !isSubmitting,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Submit Application", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                    if (isSubmitting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(
+                        if (isSubmitting) "Submitting…" else "Submit Application",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
             }
         },

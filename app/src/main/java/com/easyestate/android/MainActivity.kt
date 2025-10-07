@@ -82,6 +82,10 @@ fun EasyEstateApp(
                         launchSingleTop = true
                     }
                 }
+                is AuthUiEvent.TenantAdded -> {
+                    snackbarHostState.showSnackbar(event.message)
+                    navController.popBackStack()
+                }
             }
             authViewModel.consumeEvent()
         }
@@ -151,6 +155,7 @@ fun EasyEstateApp(
             composable(AppDestination.Home.route) {
                 HomeScreen(
                     adminName = uiState.currentAdminName.orEmpty(),
+                    canManageTenants = uiState.currentUserRole in setOf("owner", "manager"),
                     onLogout = { authViewModel.logout() },
                     onAddTenantClick = { navController.navigate(AppDestination.AddTenant.route) },
                     onNavigate = { route ->
@@ -197,11 +202,10 @@ fun EasyEstateApp(
         composable(AppDestination.AddTenant.route) {
             AddTenantScreen(
                 onClose = { navController.popBackStack() },
-                onSubmit = { _, _, _, _, _, _ ->
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Tenant submitted (stub)")
-                    }
-                }
+                onSubmit = { fullName, phone, email, dob, gender, occupation ->
+                    authViewModel.addTenant(fullName, phone, email, dob, gender, occupation)
+                },
+                isSubmitting = uiState.isLoading
             )
             }
         }

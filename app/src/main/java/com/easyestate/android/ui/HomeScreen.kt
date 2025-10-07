@@ -65,6 +65,7 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 fun HomeScreen(
     adminName: String,
     hasUnreadNotifications: Boolean = false,
+    canManageTenants: Boolean = false,
     onLogout: () -> Unit,
     onAddTenantClick: () -> Unit,
     onNavigate: (String) -> Unit,
@@ -98,7 +99,11 @@ fun HomeScreen(
                 OccupancyCard()
             }
             item {
-                QuickActionsGrid(onAddTenantClick = onAddTenantClick, onNavigate = onNavigate)
+                QuickActionsGrid(
+                    canManageTenants = canManageTenants,
+                    onAddTenantClick = onAddTenantClick,
+                    onNavigate = onNavigate
+                )
             }
         }
     }
@@ -286,9 +291,16 @@ private data class UnitOverview(
 @Composable
 private fun QuickActionsGrid(
     modifier: Modifier = Modifier,
+    canManageTenants: Boolean,
     onAddTenantClick: () -> Unit,
     onNavigate: (String) -> Unit
 ) {
+    val actions = if (canManageTenants) {
+        DashboardQuickActions
+    } else {
+        DashboardQuickActions.filterNot { it.title == "Add Tenant" }
+    }
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Quick Actions",
@@ -301,12 +313,13 @@ private fun QuickActionsGrid(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             maxItemsInEachRow = 3
         ) {
-            DashboardQuickActions.forEach { action ->
+            actions.forEach { action ->
                 QuickActionTile(
                     action = action, onClick = {
                         when (action.title) {
                             "Add Tenant" -> onAddTenantClick()
-                            "Properties" -> onNavigate(AppDestination.Properties.route) "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
+                            "Properties" -> onNavigate(AppDestination.Properties.route)
+                            "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
                             // TODO: Handle other actions
                             else -> {}
                         }
@@ -375,7 +388,13 @@ private val DashboardQuickActions = listOf(
 @Composable
 private fun HomeScreenPreview() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Easy Estate Admin", onLogout = {}, onAddTenantClick = {}, onNavigate = {})
+        HomeScreen(
+            adminName = "Easy Estate Admin",
+            canManageTenants = true,
+            onLogout = {},
+            onAddTenantClick = {},
+            onNavigate = {}
+        )
     }
 }
 
@@ -383,6 +402,13 @@ private fun HomeScreenPreview() {
 @Composable
 private fun HomeScreenPreviewWithNotifications() {
     EasyEstateTheme {
-        HomeScreen(adminName = "Philip", hasUnreadNotifications = true, onLogout = {}, onAddTenantClick = {}, onNavigate = {})
+        HomeScreen(
+            adminName = "Philip",
+            hasUnreadNotifications = true,
+            canManageTenants = false,
+            onLogout = {},
+            onAddTenantClick = {},
+            onNavigate = {}
+        )
     }
 }
