@@ -23,7 +23,7 @@ private data class NavigationItem(
 private val NavigationItems = listOf(
     NavigationItem("Home", Icons.Outlined.Home, AppDestination.Home.route),
     NavigationItem("Properties", Icons.Outlined.Apartment, AppDestination.Properties.route),
-    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, "finances"), // Assuming this will be a future route
+    NavigationItem("Finances", Icons.Outlined.AccountBalanceWallet, AppDestination.Finances.route),
     NavigationItem("Account", Icons.Outlined.AccountCircle, "account") // Assuming this will be a future route
 )
 

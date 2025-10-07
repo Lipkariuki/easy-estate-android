@@ -31,6 +31,7 @@ import com.easyestate.android.ui.SendInvoiceScreen
 import com.easyestate.android.ui.AddUnitScreen
 import com.easyestate.android.ui.AddPropertyScreen
 import com.easyestate.android.ui.PropertiesScreen
+import com.easyestate.android.ui.FinancesScreen
 import com.easyestate.android.ui.SignUpScreen
 import com.easyestate.android.ui.theme.EasyEstateTheme
 import kotlinx.coroutines.launch
@@ -175,6 +176,11 @@ fun EasyEstateApp(
                     }
                 )
             }
+            composable(AppDestination.Finances.route) {
+                FinancesScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
             composable(AppDestination.AddProperty.route) {
                 AddPropertyScreen(
                     onBack = { navController.popBackStack() },
@@ -221,6 +227,7 @@ enum class AppDestination(val route: String) {
     Properties("properties"),
     AddProperty("add_property"),
     AddUnit("add_unit"),
+    Finances("finances"),
     SendInvoice("send_invoice"),
     AddTenant("add_tenant"),
 }
