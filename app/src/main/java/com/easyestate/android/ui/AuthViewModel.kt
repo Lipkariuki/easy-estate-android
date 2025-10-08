@@ -134,11 +134,15 @@ class AuthViewModel : ViewModel() {
             val trimmedCity = city.trim()
             val trimmedLocation = location.trim()
             val trimmedNotes = notes.trim()
-            val resolvedType = propertyType.ifBlank { "residential" }
+            val trimmedType = propertyType.trim()
             val token = _uiState.value.authToken
             when {
                 trimmedName.isBlank() -> {
                     emitMessage("Property name is required")
+                    return@launch
+                }
+                trimmedType.isBlank() -> {
+                    emitMessage("Select a property type")
                     return@launch
                 }
                 token.isNullOrBlank() -> {
@@ -149,7 +153,7 @@ class AuthViewModel : ViewModel() {
                     try {
                         val request = PropertyCreateRequest(
                             name = trimmedName,
-                            propertyType = resolvedType,
+                            propertyType = trimmedType,
                             addressLine1 = trimmedAddress.takeIf { it.isNotEmpty() },
                             city = trimmedCity.takeIf { it.isNotEmpty() },
                             location = trimmedLocation.takeIf { it.isNotEmpty() },
