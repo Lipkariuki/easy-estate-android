@@ -12,6 +12,7 @@ import com.easyestate.android.data.ApiClient
 import com.easyestate.android.data.LoginRequest
 import com.easyestate.android.data.SignupRequest
 import com.easyestate.android.data.TenantCreateRequest
+import com.easyestate.android.data.PropertyCreateRequest
 
 class AuthViewModel : ViewModel() {
 
@@ -112,6 +113,70 @@ class AuthViewModel : ViewModel() {
                         }
                     } catch (e: Exception) {
                         emitMessage("An error occurred during sign-up.")
+                    }
+                }
+            }
+        }
+    }
+
+    fun addProperty(
+        name: String,
+        propertyType: String,
+        addressLine1: String,
+        city: String,
+        location: String,
+        notes: String
+    ) {
+        viewModelScope.launch {
+            setLoading(true)
+            val trimmedName = name.trim()
+            val trimmedAddress = addressLine1.trim()
+            val trimmedCity = city.trim()
+            val trimmedLocation = location.trim()
+            val trimmedNotes = notes.trim()
+            val resolvedType = propertyType.ifBlank { "residential" }
+            val token = _uiState.value.authToken
+            when {
+                trimmedName.isBlank() -> {
+                    emitMessage("Property name is required")
+                    return@launch
+                }
+                token.isNullOrBlank() -> {
+                    emitMessage("Session expired. Please sign in again.")
+                    return@launch
+                }
+                else -> {
+                    try {
+                        val request = PropertyCreateRequest(
+                            name = trimmedName,
+                            propertyType = resolvedType,
+                            addressLine1 = trimmedAddress.takeIf { it.isNotEmpty() },
+                            city = trimmedCity.takeIf { it.isNotEmpty() },
+                            location = trimmedLocation.takeIf { it.isNotEmpty() },
+                            imageUrl = null,
+                            notes = trimmedNotes.takeIf { it.isNotEmpty() }
+                        )
+                        val response = ApiClient.instance.createProperty(request)
+                        if (response.isSuccessful) {
+                            val property = response.body()
+                            val propertyName = property?.name ?: trimmedName
+                            emitPropertyAdded("Property $propertyName created successfully.")
+                        } else {
+                            if (response.code() == 401) {
+                                ApiClient.updateAuthToken(null)
+                                _uiState.update { it.copy(authToken = null, currentUserRole = null) }
+                            }
+                            val message = when (response.code()) {
+                                400 -> "Failed to add property: Invalid details provided."
+                                401 -> "You are not authorized. Please sign in again."
+                                403 -> "Your account is not permitted to add properties."
+                                else -> "Failed to add property: ${response.message()}"
+                            }
+                            emitMessage(message)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("AuthViewModel", "Add property failed", e)
+                        emitMessage("An error occurred while adding the property.")
                     }
                 }
             }
@@ -251,6 +316,15 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    private fun emitPropertyAdded(message: String) {
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                event = AuthUiEvent.PropertyAdded(message)
+            )
+        }
+    }
+
     private fun emitTenantAdded(message: String) {
         _uiState.update {
             it.copy(
@@ -277,5 +351,6 @@ sealed interface AuthUiEvent {
 
     data class NavigateHome(val adminName: String) : AuthUiEvent
     data object NavigateToLanding : AuthUiEvent
+    data class PropertyAdded(val message: String) : AuthUiEvent
     data class TenantAdded(val message: String) : AuthUiEvent
 }

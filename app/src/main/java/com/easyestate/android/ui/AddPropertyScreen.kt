@@ -27,13 +27,22 @@ import com.easyestate.android.ui.theme.EasyEstateTheme
 @Composable
 fun AddPropertyScreen(
     onBack: () -> Unit,
-    onAddProperty: () -> Unit,
+    onAddProperty: (
+        name: String,
+        propertyType: String,
+        address: String,
+        city: String,
+        location: String,
+        notes: String
+    ) -> Unit,
+    isSubmitting: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var propertyName by rememberSaveable { mutableStateOf("") }
     var propertyType by rememberSaveable { mutableStateOf("") }
     var propertyTypeLabel by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
+    var city by rememberSaveable { mutableStateOf("") }
     var location by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
 
@@ -76,13 +85,25 @@ fun AddPropertyScreen(
                     .padding(24.dp)
             ) {
                 Button(
-                    onClick = onAddProperty,
+                    onClick = { onAddProperty(propertyName, propertyType, address, city, location, notes) },
+                    enabled = !isSubmitting,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("Add Property", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                    if (isSubmitting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text(
+                        if (isSubmitting) "Saving…" else "Add Property",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
             }
         },
@@ -124,7 +145,20 @@ fun AddPropertyScreen(
                     OutlinedTextField(
                         value = address,
                         onValueChange = { address = it },
-                        placeholder = { Text("e.g. 123 Maple Street") },
+                        placeholder = { Text("e.g. 106 Kilimani Road") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = textFieldColors,
+                        singleLine = true
+                    )
+                }
+            }
+            item {
+                FormField(label = "City / Town") {
+                    OutlinedTextField(
+                        value = city,
+                        onValueChange = { city = it },
+                        placeholder = { Text("e.g. Nairobi") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = textFieldColors,
@@ -137,7 +171,7 @@ fun AddPropertyScreen(
                     OutlinedTextField(
                         value = location,
                         onValueChange = { location = it },
-                        placeholder = { Text("e.g. Springfield") },
+                        placeholder = { Text("e.g. Kilimani") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors = textFieldColors,
@@ -284,6 +318,6 @@ private fun ImageDropzone(modifier: Modifier = Modifier) {
 @Composable
 private fun AddPropertyScreenPreview() {
     EasyEstateTheme {
-        AddPropertyScreen(onBack = {}, onAddProperty = {})
+        AddPropertyScreen(onBack = {}, onAddProperty = { _, _, _, _, _, _ -> })
     }
 }

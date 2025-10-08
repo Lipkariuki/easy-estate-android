@@ -75,6 +75,36 @@ data class TenantResponse(
     @SerializedName("created_at") val createdAt: String
 )
 
+data class PropertyCreateRequest(
+    val name: String,
+    @SerializedName("property_type") val propertyType: String,
+    @SerializedName("address_line_1") val addressLine1: String?,
+    val city: String?,
+    val location: String?,
+    @SerializedName("image_url") val imageUrl: String?,
+    val notes: String?
+)
+
+data class PropertyResponse(
+    val id: Int,
+    val name: String,
+    val code: String?,
+    @SerializedName("property_type") val propertyType: String?,
+    val city: String?,
+    val location: String?,
+    @SerializedName("image_url") val imageUrl: String?,
+    @SerializedName("occupancy_rate") val occupancyRate: Double,
+    @SerializedName("units_total") val unitsTotal: Int,
+    @SerializedName("units_vacant") val unitsVacant: Int,
+    @SerializedName("pending_kyc") val pendingKyc: Int,
+    @SerializedName("monthly_revenue") val monthlyRevenue: Double,
+    @SerializedName("address_line_1") val addressLine1: String?,
+    val notes: String?,
+    @SerializedName("owner_id") val ownerId: Int?,
+    @SerializedName("manager_id") val managerId: Int?,
+    @SerializedName("created_at") val createdAt: String?
+)
+
 // --- Retrofit API Service ---
 
 interface EasyEstateApiService {
@@ -86,6 +116,9 @@ interface EasyEstateApiService {
 
     @POST("tenants/")
     suspend fun createTenant(@Body request: TenantCreateRequest): Response<TenantResponse>
+
+    @POST("properties/")
+    suspend fun createProperty(@Body request: PropertyCreateRequest): Response<PropertyResponse>
 }
 
 // --- Retrofit Client ---

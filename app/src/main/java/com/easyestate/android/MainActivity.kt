@@ -83,6 +83,10 @@ fun EasyEstateApp(
                         launchSingleTop = true
                     }
                 }
+                is AuthUiEvent.PropertyAdded -> {
+                    snackbarHostState.showSnackbar(event.message)
+                    navController.popBackStack()
+                }
                 is AuthUiEvent.TenantAdded -> {
                     snackbarHostState.showSnackbar(event.message)
                     navController.popBackStack()
@@ -189,10 +193,11 @@ fun EasyEstateApp(
             composable(AppDestination.AddProperty.route) {
                 AddPropertyScreen(
                     onBack = { navController.popBackStack() },
-                    onAddProperty = {
-                        /* TODO: Handle property submission */
-                        navController.popBackStack()
-                    })
+                    onAddProperty = { name, type, address, city, location, notes ->
+                        authViewModel.addProperty(name, type, address, city, location, notes)
+                    },
+                    isSubmitting = uiState.isLoading
+                )
             }
             composable(AppDestination.AddUnit.route) {
                 AddUnitScreen(
