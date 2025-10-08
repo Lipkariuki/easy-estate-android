@@ -149,9 +149,8 @@ private fun StatsChart() {
                         val fraction = stat.count.toFloat() / maxValue
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth(fraction.coerceIn(0f, 1f))
                                 .fillMaxHeight()
-                                .clip(RoundedCornerShape(9.dp))
+                                .fillMaxWidth(fraction.coerceIn(0f, 1f))
                                 .background(stat.color)
                         )
                     }
