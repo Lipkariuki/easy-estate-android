@@ -32,6 +32,7 @@ fun AddPropertyScreen(
 ) {
     var propertyName by rememberSaveable { mutableStateOf("") }
     var propertyType by rememberSaveable { mutableStateOf("") }
+    var propertyTypeLabel by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
     var location by rememberSaveable { mutableStateOf("") }
     var notes by rememberSaveable { mutableStateOf("") }
@@ -110,8 +111,11 @@ fun AddPropertyScreen(
             item {
                 FormField(label = "Property Type") {
                     PropertyTypeDropdown(
-                        selectedType = propertyType,
-                        onTypeSelected = { propertyType = it }
+                        selectedLabel = propertyTypeLabel,
+                        onTypeSelected = { option ->
+                            propertyType = option.value
+                            propertyTypeLabel = option.label
+                        }
                     )
                 }
             }
@@ -174,8 +178,23 @@ private fun FormField(label: String, content: @Composable () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PropertyTypeDropdown(selectedType: String, onTypeSelected: (String) -> Unit) {
-    val types = listOf("Apartment", "House", "Condo", "Townhouse")
+private fun PropertyTypeDropdown(
+    selectedLabel: String,
+    onTypeSelected: (PropertyTypeOption) -> Unit
+) {
+    val types = remember {
+        listOf(
+            PropertyTypeOption("🏢 Apartment", "apartment"),
+            PropertyTypeOption("🏠 Residential House", "residential_house"),
+            PropertyTypeOption("🏢 Office Space", "office_space"),
+            PropertyTypeOption("🏭 Warehouse / Go-down", "warehouse"),
+            PropertyTypeOption("🏘️ Airbnb / Short-term Rental", "airbnb"),
+            PropertyTypeOption("🏬 Shop / Retail Unit", "retail_unit"),
+            PropertyTypeOption("🌾 Plot / Land Parcel", "land_parcel"),
+            PropertyTypeOption("🏫 Hostel / Institution", "hostel"),
+            PropertyTypeOption("❓ Other (Specify)", "other")
+        )
+    }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -184,7 +203,7 @@ private fun PropertyTypeDropdown(selectedType: String, onTypeSelected: (String) 
         modifier = Modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
-            value = selectedType.ifEmpty { "Select property type" },
+            value = selectedLabel.ifEmpty { "Select property type" },
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -195,13 +214,13 @@ private fun PropertyTypeDropdown(selectedType: String, onTypeSelected: (String) 
                 focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedTextColor = if (selectedType.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface
+                unfocusedTextColor = if (selectedLabel.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurface
             )
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             types.forEach { type ->
                 DropdownMenuItem(
-                    text = { Text(type) },
+                    text = { Text(type.label) },
                     onClick = {
                         onTypeSelected(type)
                         expanded = false
@@ -211,6 +230,8 @@ private fun PropertyTypeDropdown(selectedType: String, onTypeSelected: (String) 
         }
     }
 }
+
+private data class PropertyTypeOption(val label: String, val value: String)
 
 @Composable
 private fun ImageDropzone(modifier: Modifier = Modifier) {
