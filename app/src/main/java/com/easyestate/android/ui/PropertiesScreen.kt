@@ -114,49 +114,49 @@ private fun StatsChart() {
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            StatCard(
-                label = "Properties",
-                value = "12",
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
-            )
-            StatCard(
-                label = "Units",
-                value = "60",
-                color = StitchInfo,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
+        val stats = listOf(
+            PropertyBarStat("Properties", 12, MaterialTheme.colorScheme.primary),
+            PropertyBarStat("Units", 60, StitchInfo)
+        )
+        val maxValue = stats.maxOf { it.count }.coerceAtLeast(1)
 
-@Composable
-private fun StatCard(
-    label: String,
-    value: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                label,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                value,
-                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.ExtraBold),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            stats.forEach { stat ->
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stat.label,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stat.count.toString(),
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(18.dp)
+                            .clip(RoundedCornerShape(9.dp))
+                            .background(stat.color.copy(alpha = 0.15f))
+                    ) {
+                        val fraction = stat.count.toFloat() / maxValue
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(fraction.coerceIn(0f, 1f))
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(9.dp))
+                                .background(stat.color)
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -244,6 +244,12 @@ private data class PropertyQuickAction(
     val title: String,
     val icon: ImageVector,
     val accentColor: Color? = null
+)
+
+private data class PropertyBarStat(
+    val label: String,
+    val count: Int,
+    val color: Color
 )
 
 @Preview(showBackground = true)
