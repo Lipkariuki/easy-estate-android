@@ -136,33 +136,22 @@ private fun FinanceSnapshot() {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FinanceMetric("Incoming", "KES 456k", Icons.Outlined.TrendingUp, primary)
-            Spacer(modifier = Modifier.width(16.dp))
-            FinanceMetric("Outgoing", "KES 172k", Icons.Outlined.TrendingDown, error)
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(primary.copy(alpha = 0.08f))
-                .padding(16.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Outstanding Balance", style = MaterialTheme.typography.bodyMedium, color = onSurface)
-                Text(
-                    "KES 96,300",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    color = onSurface
-                )
-                Text(
-                    "Keep an eye on pending invoices to maintain healthy cash flow.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = onSurface.copy(alpha = 0.7f)
-                )
-            }
+            FinanceMetric(
+                title = "Income",
+                amount = "KES 456k",
+                icon = Icons.Outlined.TrendingUp,
+                accent = primary,
+                modifier = Modifier.weight(1f)
+            )
+            FinanceMetric(
+                title = "Expense",
+                amount = "KES 172k",
+                icon = Icons.Outlined.TrendingDown,
+                accent = error,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -172,10 +161,11 @@ private fun FinanceMetric(
     title: String,
     amount: String,
     icon: ImageVector,
-    accent: Color
+    accent: Color,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(20.dp))
             .background(accent.copy(alpha = 0.08f))
             .padding(vertical = 16.dp, horizontal = 18.dp),
