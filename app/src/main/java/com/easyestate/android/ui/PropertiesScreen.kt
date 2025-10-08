@@ -165,11 +165,17 @@ private fun StatCard(
 private fun QuickActionsSection(
     onNavigate: (String) -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     val actions = listOf(
-        PropertyQuickAction("Add Property", Icons.Outlined.AddBusiness),
-        PropertyQuickAction("Add Unit", Icons.Outlined.AddHome),
-        PropertyQuickAction("Units", Icons.Outlined.Apartment),
-        PropertyQuickAction("Meter", Icons.Outlined.Speed)
+        PropertyQuickAction("Add Property", Icons.Outlined.AddBusiness, colorScheme.primary),
+        PropertyQuickAction("Add Unit", Icons.Outlined.AddHome, colorScheme.primary),
+        PropertyQuickAction("Edit Property", Icons.Outlined.EditNote, colorScheme.primary),
+        PropertyQuickAction("View Units", Icons.Outlined.Apartment),
+        PropertyQuickAction("Rent Overview", Icons.Outlined.AttachMoney),
+        PropertyQuickAction("Meters", Icons.Outlined.Speed),
+        PropertyQuickAction("Tenants", Icons.Outlined.Groups),
+        PropertyQuickAction("Maintenance", Icons.Outlined.Construction),
+        PropertyQuickAction("Vacant/Occupied", Icons.Outlined.HomeWork)
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -193,8 +199,7 @@ private fun QuickActionsSection(
                                     "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
                                     else -> {}
                                 }
-                            },
-                            modifier = Modifier.width(96.dp)
+                            }
                         )
                     }
                     repeat(3 - rowActions.size) {
@@ -209,14 +214,12 @@ private fun QuickActionsSection(
 @Composable
 private fun PropertyActionTile(
     action: PropertyQuickAction,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surface)
+        modifier = Modifier
+            .width(96.dp)
+            .clip(MaterialTheme.shapes.large)
             .clickable(onClick = onClick)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -225,13 +228,13 @@ private fun PropertyActionTile(
         Icon(
             imageVector = action.icon,
             contentDescription = action.title,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(36.dp)
+            tint = action.accentColor ?: MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(32.dp)
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = action.title,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
             textAlign = TextAlign.Center
         )
     }
@@ -239,7 +242,8 @@ private fun PropertyActionTile(
 
 private data class PropertyQuickAction(
     val title: String,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val accentColor: Color? = null
 )
 
 @Preview(showBackground = true)
