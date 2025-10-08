@@ -178,7 +178,12 @@ fun EasyEstateApp(
             }
             composable(AppDestination.Finances.route) {
                 FinancesScreen(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable(AppDestination.AddProperty.route) {

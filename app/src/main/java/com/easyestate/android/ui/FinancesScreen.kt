@@ -52,12 +52,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easyestate.android.R
+import com.easyestate.android.AppDestination
+import com.easyestate.android.ui.components.HomeNavigationBar
 import com.easyestate.android.ui.theme.EasyEstateTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinancesScreen(
     onBack: () -> Unit,
+    onNavigate: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -91,7 +94,10 @@ fun FinancesScreen(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            bottomBar = {
+                HomeNavigationBar(onNavigate = onNavigate)
+            }
         ) { padding ->
             LazyColumn(
                 modifier = Modifier
@@ -101,7 +107,7 @@ fun FinancesScreen(
                 verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
                 item { FinanceSnapshot() }
-                item { FinancesQuickActions() }
+                item { FinancesQuickActions(onNavigate) }
             }
         }
     }
@@ -196,7 +202,7 @@ private fun FinanceMetric(
 }
 
 @Composable
-private fun FinancesQuickActions() {
+private fun FinancesQuickActions(onNavigate: (String) -> Unit) {
     val colorScheme = MaterialTheme.colorScheme
     val accent = colorScheme.primary
     val actions = listOf(
@@ -228,7 +234,14 @@ private fun FinancesQuickActions() {
                         FinanceActionTile(
                             action = action,
                             iconTint = accent,
-                            modifier = Modifier.width(96.dp)
+                            modifier = Modifier.width(96.dp),
+                            onClick = {
+                                when (action.title) {
+                                    "Send Invoice" -> onNavigate(AppDestination.SendInvoice.route)
+                                    "Invoices" -> onNavigate(AppDestination.SendInvoice.route)
+                                    else -> {}
+                                }
+                            }
                         )
                     }
                     repeat(3 - rowActions.size) {
@@ -244,12 +257,13 @@ private fun FinancesQuickActions() {
 private fun FinanceActionTile(
     action: FinanceQuickAction,
     iconTint: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .clip(MaterialTheme.shapes.large)
-            .clickable { }
+            .clickable { onClick() }
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
