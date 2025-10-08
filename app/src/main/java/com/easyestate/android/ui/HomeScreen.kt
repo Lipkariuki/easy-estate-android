@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.outlined.Campaign
@@ -305,25 +304,35 @@ private fun QuickActionsGrid(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        FlowRow(
+        // Fixed the issue by replacing FlowRow with standard layout (Column of Rows)
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            actions.forEach { action ->
-                QuickActionTile(
-                    action = action,
-                    onClick = {
-                        when (action.title) {
-                            "Add Tenant" -> onAddTenantClick()
-                            "Properties" -> onNavigate(AppDestination.Properties.route)
-                            "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
-                            else -> {}
-                        }
-                    },
-                    modifier = Modifier.width(110.dp)
-                )
+            actions.chunked(3).forEach { rowActions ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    rowActions.forEach { action ->
+                        QuickActionTile(
+                            action = action,
+                            onClick = {
+                                when (action.title) {
+                                    "Add Tenant" -> onAddTenantClick()
+                                    "Properties" -> onNavigate(AppDestination.Properties.route)
+                                    "Send Bills" -> onNavigate(AppDestination.SendInvoice.route)
+                                    else -> {}
+                                }
+                            },
+                            modifier = Modifier.width(96.dp)
+                        )
+                    }
+                    // Add spacers for empty slots in the last row to maintain alignment if row count is < 3
+                    repeat(3 - rowActions.size) {
+                        Spacer(modifier = Modifier.width(96.dp))
+                    }
+                }
             }
         }
     }
@@ -365,7 +374,9 @@ private fun QuickActionTile(
             text = action.title,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            // Added maxLines to prevent text overflow and potential layout issues
+            maxLines = 1
         )
     }
 }
@@ -373,8 +384,10 @@ private fun QuickActionTile(
 private val DashboardQuickActions = listOf(
     QuickAction("Send Bills", Icons.AutoMirrored.Outlined.ReceiptLong),
     QuickAction("Broadcast", Icons.Outlined.Campaign),
-    QuickAction("Visitor Log", Icons.AutoMirrored.Outlined.ReceiptLong), // Using ReceiptLong as a substitute for Badge
-    QuickAction("Notice", Icons.AutoMirrored.Outlined.NoteAdd), // Using NoteAdd as a substitute for sticky_note_2
+    // Changed Visitor Log icon to Outlined.Visibility for better semantic meaning
+    QuickAction("Visitor Log", Icons.Outlined.Visibility),
+    // Changed Notice icon to Outlined.StickyNote2 for better semantic meaning
+    QuickAction("Notice", Icons.Outlined.StickyNote2),
     QuickAction("Payment", Icons.Outlined.Payments),
     QuickAction("Support", Icons.Outlined.SupportAgent),
     QuickAction("Properties", Icons.Outlined.Apartment),
@@ -415,4 +428,3 @@ private fun HomeScreenPreviewWithNotifications() {
         )
     }
 }
-import androidx.compose.foundation.layout.width

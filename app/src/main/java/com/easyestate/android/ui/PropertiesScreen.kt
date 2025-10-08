@@ -6,8 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -162,7 +161,6 @@ private fun StatCard(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun QuickActionsSection(
     onNavigate: (String) -> Unit
@@ -180,23 +178,29 @@ private fun QuickActionsSection(
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3
-        ) {
-            actions.forEach { action ->
-                PropertyActionTile(
-                    action = action,
-                    onClick = {
-                        when (action.title) {
-                            "Add Property" -> onNavigate(AppDestination.AddProperty.route)
-                            "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
-                            else -> { /* TODO: Handle other actions */ }
-                        }
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            actions.chunked(3).forEach { rowActions ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    rowActions.forEach { action ->
+                        PropertyActionTile(
+                            action = action,
+                            onClick = {
+                                when (action.title) {
+                                    "Add Property" -> onNavigate(AppDestination.AddProperty.route)
+                                    "Add Unit" -> onNavigate(AppDestination.AddUnit.route)
+                                    else -> {}
+                                }
+                            },
+                            modifier = Modifier.width(96.dp)
+                        )
                     }
-                )
+                    repeat(3 - rowActions.size) {
+                        Spacer(modifier = Modifier.width(96.dp))
+                    }
+                }
             }
         }
     }
@@ -205,10 +209,11 @@ private fun QuickActionsSection(
 @Composable
 private fun PropertyActionTile(
     action: PropertyQuickAction,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surface)

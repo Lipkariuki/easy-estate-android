@@ -6,16 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Arrangement.Horizontal
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -108,7 +107,6 @@ fun FinancesScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FinanceSnapshot() {
     val surface = MaterialTheme.colorScheme.surface
@@ -130,13 +128,12 @@ private fun FinanceSnapshot() {
             color = onSurface
         )
 
-        FlowRow(
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             FinanceMetric("Incoming", "KES 456k", Icons.Outlined.TrendingUp, primary)
+            Spacer(modifier = Modifier.width(16.dp))
             FinanceMetric("Outgoing", "KES 172k", Icons.Outlined.TrendingDown, error)
         }
 
@@ -198,7 +195,6 @@ private fun FinanceMetric(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FinancesQuickActions() {
     val colorScheme = MaterialTheme.colorScheme
@@ -222,14 +218,23 @@ private fun FinancesQuickActions() {
             color = colorScheme.onBackground
         )
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3
-        ) {
-            actions.forEach { action ->
-                FinanceActionTile(action, accent)
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            actions.chunked(3).forEach { rowActions ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    rowActions.forEach { action ->
+                        FinanceActionTile(
+                            action = action,
+                            iconTint = accent,
+                            modifier = Modifier.width(96.dp)
+                        )
+                    }
+                    repeat(3 - rowActions.size) {
+                        Spacer(modifier = Modifier.width(96.dp))
+                    }
+                }
             }
         }
     }
@@ -238,10 +243,11 @@ private fun FinancesQuickActions() {
 @Composable
 private fun FinanceActionTile(
     action: FinanceQuickAction,
-    iconTint: Color
+    iconTint: Color,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.large)
             .clickable { }
             .padding(vertical = 8.dp),
